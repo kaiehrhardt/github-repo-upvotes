@@ -40,11 +40,13 @@ export interface PageInfo {
 export interface IssuesConnection {
   nodes: Issue[];
   pageInfo: PageInfo;
+  totalCount?: number;
 }
 
 export interface PullRequestsConnection {
   nodes: PullRequest[];
   pageInfo: PageInfo;
+  totalCount?: number;
 }
 
 export interface RepositoryData {

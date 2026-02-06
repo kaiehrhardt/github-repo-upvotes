@@ -184,9 +184,16 @@ async function handleLoad(): Promise<void> {
   loadBtn.disabled = true;
 
   try {
+    // Track progress separately for issues and PRs
+    let currentIssuesCount = 0;
+    let currentPRsCount = 0;
+
     // Fetch data with progress callback
     const result = await fetchRepositoryData(repo, loadStateFilter, token, (issuesCount, prsCount) => {
-      updateLoadingProgress(issuesCount, prsCount);
+      // Update counters (these come from separate parallel fetches)
+      if (issuesCount > 0) currentIssuesCount = issuesCount;
+      if (prsCount > 0) currentPRsCount = prsCount;
+      updateLoadingProgress(currentIssuesCount, currentPRsCount);
     });
 
     if (result.error) {
