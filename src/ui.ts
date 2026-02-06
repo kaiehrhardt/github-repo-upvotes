@@ -1,4 +1,4 @@
-import type { Issue, PullRequest, StateFilter, TabType, APIError } from './types';
+import type { Issue, PullRequest, StateFilter, LoadStateFilter, TabType, APIError } from './types';
 import { filterIssues, filterPullRequests, sortByReactions } from './utils';
 
 // DOM Elements
@@ -53,9 +53,9 @@ function renderIssueCard(issue: Issue): string {
       <div class="flex items-start justify-between">
         <div class="flex-1 min-w-0">
           <div class="flex items-center gap-2 mb-2">
-            <a 
-              href="${issue.url}" 
-              target="_blank" 
+            <a
+              href="${issue.url}"
+              target="_blank"
               rel="noopener noreferrer"
               class="text-github-fg-muted dark:text-github-fg-darkMuted hover:text-github-accent-emphasis dark:hover:text-github-accent-dark font-medium"
             >
@@ -64,9 +64,9 @@ function renderIssueCard(issue: Issue): string {
             <span class="badge ${stateBadgeClass}">${stateText}</span>
           </div>
           <h3 class="text-lg font-medium mb-2">
-            <a 
-              href="${issue.url}" 
-              target="_blank" 
+            <a
+              href="${issue.url}"
+              target="_blank"
               rel="noopener noreferrer"
               class="text-github-fg-default dark:text-github-fg-dark hover:text-github-accent-emphasis dark:hover:text-github-accent-dark"
             >
@@ -115,9 +115,9 @@ function renderPullRequestCard(pr: PullRequest): string {
       <div class="flex items-start justify-between">
         <div class="flex-1 min-w-0">
           <div class="flex items-center gap-2 mb-2">
-            <a 
-              href="${pr.url}" 
-              target="_blank" 
+            <a
+              href="${pr.url}"
+              target="_blank"
               rel="noopener noreferrer"
               class="text-github-fg-muted dark:text-github-fg-darkMuted hover:text-github-accent-emphasis dark:hover:text-github-accent-dark font-medium"
             >
@@ -126,9 +126,9 @@ function renderPullRequestCard(pr: PullRequest): string {
             <span class="badge ${stateBadgeClass}">${stateText}</span>
           </div>
           <h3 class="text-lg font-medium mb-2">
-            <a 
-              href="${pr.url}" 
-              target="_blank" 
+            <a
+              href="${pr.url}"
+              target="_blank"
               rel="noopener noreferrer"
               class="text-github-fg-default dark:text-github-fg-dark hover:text-github-accent-emphasis dark:hover:text-github-accent-dark"
             >
@@ -172,10 +172,10 @@ function escapeHtml(text: string): string {
 export function renderIssues(issues: Issue[], filter: StateFilter): void {
   const issuesList = getElement('issues-list');
   const emptyState = getElement('empty-state');
-  
+
   const filtered = filterIssues(issues, filter);
   const sorted = sortByReactions(filtered);
-  
+
   if (sorted.length === 0) {
     issuesList.classList.add('hidden');
     emptyState.classList.remove('hidden');
@@ -189,10 +189,10 @@ export function renderIssues(issues: Issue[], filter: StateFilter): void {
 export function renderPullRequests(prs: PullRequest[], filter: StateFilter): void {
   const prsList = getElement('prs-list');
   const emptyState = getElement('empty-state');
-  
+
   const filtered = filterPullRequests(prs, filter);
   const sorted = sortByReactions(filtered);
-  
+
   if (sorted.length === 0) {
     prsList.classList.add('hidden');
     emptyState.classList.remove('hidden');
@@ -235,14 +235,45 @@ export function switchTab(tab: TabType): void {
 }
 
 // Filter button management
-export function updateFilterButtons(activeFilter: StateFilter): void {
+export function updateFilterButtons(activeFilter: StateFilter, loadStateFilter: LoadStateFilter): void {
   const filterButtons = document.querySelectorAll('.filter-button');
   filterButtons.forEach(button => {
-    const filter = button.getAttribute('data-filter');
-    if (filter === activeFilter) {
-      button.classList.add('active');
-    } else {
+    const filter = button.getAttribute('data-filter') as StateFilter;
+
+    // Update "All" button text based on loadStateFilter
+    if (filter === 'all') {
+      const allButton = button as HTMLButtonElement;
+      if (loadStateFilter === 'open') {
+        allButton.textContent = 'All Open';
+      } else if (loadStateFilter === 'closed') {
+        allButton.textContent = 'All Closed';
+      } else {
+        allButton.textContent = 'All';
+      }
+    }
+
+    // Determine if button should be disabled
+    let shouldDisable = false;
+    if (loadStateFilter === 'open' && (filter === 'closed' || filter === 'merged')) {
+      shouldDisable = true;
+    } else if (loadStateFilter === 'closed' && filter === 'open') {
+      shouldDisable = true;
+    }
+
+    // Update button state
+    if (shouldDisable) {
+      button.classList.add('opacity-50', 'cursor-not-allowed');
+      button.setAttribute('disabled', 'true');
       button.classList.remove('active');
+    } else {
+      button.classList.remove('opacity-50', 'cursor-not-allowed');
+      button.removeAttribute('disabled');
+
+      if (filter === activeFilter) {
+        button.classList.add('active');
+      } else {
+        button.classList.remove('active');
+      }
     }
   });
 }
@@ -252,7 +283,7 @@ export function toggleTokenVisibility(): boolean {
   const tokenInput = getElement<HTMLInputElement>('token-input');
   const eyeIcon = getElement('eye-icon');
   const eyeOffIcon = getElement('eye-off-icon');
-  
+
   if (tokenInput.type === 'password') {
     tokenInput.type = 'text';
     eyeIcon.classList.add('hidden');

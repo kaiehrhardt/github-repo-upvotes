@@ -4,17 +4,17 @@ import type { Repository, Issue, PullRequest, StateFilter } from './types';
 export function parseRepository(input: string): Repository | null {
   const trimmed = input.trim();
   const parts = trimmed.split('/');
-  
+
   if (parts.length !== 2) {
     return null;
   }
-  
+
   const [owner, name] = parts;
-  
+
   if (!owner || !name || owner.includes(' ') || name.includes(' ')) {
     return null;
   }
-  
+
   return { owner, name };
 }
 
@@ -72,7 +72,7 @@ export function formatDate(isoString: string): string {
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-  
+
   if (diffDays === 0) {
     return 'today';
   } else if (diffDays === 1) {

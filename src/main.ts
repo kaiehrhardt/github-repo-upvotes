@@ -2,14 +2,14 @@ import './styles.css';
 import type { AppState, StateFilter, LoadStateFilter } from './types';
 import { parseRepository } from './utils';
 import { fetchRepositoryData } from './github-api';
-import { 
-  getToken, 
-  saveToken, 
-  clearToken, 
-  initializeTheme, 
+import {
+  getToken,
+  saveToken,
+  clearToken,
+  initializeTheme,
   toggleTheme,
   saveLastRepo,
-  getLastRepo 
+  getLastRepo
 } from './storage';
 import {
   showLoading,
@@ -34,6 +34,7 @@ const state: AppState = {
   pullRequests: [],
   activeTab: 'issues',
   stateFilter: 'all',
+  loadStateFilter: 'open',
   theme: 'light',
 };
 
@@ -130,8 +131,14 @@ function setupEventListeners(): void {
   filterButtons.forEach(button => {
     button.addEventListener('click', () => {
       const filter = button.getAttribute('data-filter') as StateFilter;
+
+      // Check if button is disabled
+      if (button.hasAttribute('disabled')) {
+        return;
+      }
+
       state.stateFilter = filter;
-      updateFilterButtons(filter);
+      updateFilterButtons(filter, state.loadStateFilter);
       renderCurrentTab();
     });
   });
@@ -201,17 +208,18 @@ async function handleLoad(): Promise<void> {
     state.pullRequests = result.pullRequests;
     state.error = null;
     state.loading = false;
+    state.loadStateFilter = loadStateFilter;
 
     // Update UI
     updateCounts(result.issues.length, result.pullRequests.length);
     showResults();
-    
+
     // Reset to default tab and filter
     state.activeTab = 'issues';
     state.stateFilter = 'all';
     switchTab('issues');
-    updateFilterButtons('all');
-    
+    updateFilterButtons('all', loadStateFilter);
+
     // Render initial data
     renderCurrentTab();
 

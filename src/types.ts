@@ -83,5 +83,6 @@ export interface AppState {
   pullRequests: PullRequest[];
   activeTab: TabType;
   stateFilter: StateFilter;
+  loadStateFilter: LoadStateFilter;
   theme: Theme;
 }
