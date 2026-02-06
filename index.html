@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="View GitHub repository issues and pull requests ranked by reactions/upvotes" />
+    <title>GitHub Repo Upvotes</title>
+  </head>
+  <body>
+    <div id="app" class="min-h-screen">
+      <!-- Header -->
+      <header class="border-b border-github-border-default dark:border-github-border-dark bg-github-canvas-default dark:bg-github-canvas-dark">
+        <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+          <h1 class="text-2xl font-bold text-github-fg-default dark:text-github-fg-dark">
+            GitHub Repo Upvotes
+          </h1>
+          <button
+            id="theme-toggle"
+            class="p-2 rounded-md hover:bg-github-canvas-subtle dark:hover:bg-github-canvas-darkSubtle transition-colors"
+            aria-label="Toggle theme"
+          >
+            <svg id="theme-icon-light" class="w-6 h-6 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+            </svg>
+            <svg id="theme-icon-dark" class="w-6 h-6 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- Main Content -->
+      <main class="container mx-auto px-4 py-8 max-w-6xl">
+        <!-- Input Section -->
+        <section class="card mb-8">
+          <h2 class="text-lg font-semibold mb-4">Repository</h2>
+          <div class="space-y-4">
+            <div>
+              <label for="repo-input" class="block text-sm font-medium mb-2">
+                Repository (owner/repo)
+              </label>
+              <input
+                type="text"
+                id="repo-input"
+                class="input-field"
+                placeholder="e.g., facebook/react"
+                autocomplete="off"
+              />
+            </div>
+            
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <label for="token-input" class="block text-sm font-medium">
+                  GitHub Token (optional)
+                </label>
+                <button
+                  id="clear-token-btn"
+                  class="text-sm text-github-fg-muted dark:text-github-fg-darkMuted hover:text-github-danger-emphasis dark:hover:text-github-danger-dark transition-colors hidden"
+                >
+                  Clear Token
+                </button>
+              </div>
+              <div class="relative">
+                <input
+                  type="password"
+                  id="token-input"
+                  class="input-field pr-10"
+                  placeholder="ghp_..."
+                  autocomplete="off"
+                />
+                <button
+                  id="toggle-token-visibility"
+                  class="absolute right-3 top-1/2 -translate-y-1/2 text-github-fg-muted dark:text-github-fg-darkMuted hover:text-github-fg-default dark:hover:text-github-fg-dark"
+                  aria-label="Toggle token visibility"
+                >
+                  <svg id="eye-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                  </svg>
+                  <svg id="eye-off-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>
+                  </svg>
+                </button>
+              </div>
+              <p class="text-xs text-github-fg-muted dark:text-github-fg-darkMuted mt-1">
+                Optional: Increases rate limit from 60 to 5000 requests/hour
+              </p>
+            </div>
+
+            <button id="load-btn" class="btn-primary w-full">
+              Load Repository Data
+            </button>
+          </div>
+        </section>
+
+        <!-- Loading State -->
+        <div id="loading-state" class="hidden text-center py-12">
+          <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-github-accent-emphasis dark:border-github-accent-dark"></div>
+          <p class="mt-4 text-github-fg-muted dark:text-github-fg-darkMuted">Loading repository data...</p>
+          <p id="loading-progress" class="text-sm text-github-fg-muted dark:text-github-fg-darkMuted mt-2"></p>
+        </div>
+
+        <!-- Error State -->
+        <div id="error-state" class="hidden card bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800">
+          <div class="flex items-start">
+            <svg class="w-6 h-6 text-red-600 dark:text-red-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <div>
+              <h3 class="font-semibold text-red-900 dark:text-red-200">Error</h3>
+              <p id="error-message" class="text-red-800 dark:text-red-300 mt-1"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Results Section -->
+        <div id="results-section" class="hidden">
+          <!-- Tabs -->
+          <div class="border-b border-github-border-default dark:border-github-border-dark mb-6">
+            <nav class="flex space-x-8" aria-label="Tabs">
+              <button id="tab-issues" class="tab-button active">
+                Issues <span id="issues-count" class="ml-1"></span>
+              </button>
+              <button id="tab-prs" class="tab-button">
+                Pull Requests <span id="prs-count" class="ml-1"></span>
+              </button>
+            </nav>
+          </div>
+
+          <!-- Filters -->
+          <div class="flex items-center space-x-2 mb-6">
+            <span class="text-sm font-medium text-github-fg-muted dark:text-github-fg-darkMuted">Filter:</span>
+            <div class="flex space-x-2">
+              <button data-filter="all" class="filter-button active">All</button>
+              <button data-filter="open" class="filter-button">Open</button>
+              <button data-filter="closed" class="filter-button">Closed</button>
+              <button data-filter="merged" class="filter-button" id="merged-filter">Merged</button>
+            </div>
+          </div>
+
+          <!-- Issues List -->
+          <div id="issues-list" class="space-y-4">
+            <!-- Dynamically populated -->
+          </div>
+
+          <!-- Pull Requests List -->
+          <div id="prs-list" class="space-y-4 hidden">
+            <!-- Dynamically populated -->
+          </div>
+
+          <!-- Empty State -->
+          <div id="empty-state" class="hidden text-center py-12">
+            <svg class="w-16 h-16 mx-auto text-github-fg-muted dark:text-github-fg-darkMuted opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+            </svg>
+            <p class="mt-4 text-github-fg-muted dark:text-github-fg-darkMuted">No items found matching the current filter.</p>
+          </div>
+        </div>
+      </main>
+
+      <!-- Footer -->
+      <footer class="container mx-auto px-4 py-8 text-center text-sm text-github-fg-muted dark:text-github-fg-darkMuted border-t border-github-border-default dark:border-github-border-dark mt-12">
+        <p>Built with the GitHub GraphQL API</p>
+      </footer>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

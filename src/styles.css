@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-github-canvas-default dark:bg-github-canvas-dark text-github-fg-default dark:text-github-fg-dark transition-colors duration-200;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-4 py-2 bg-github-accent-emphasis dark:bg-github-accent-dark text-white rounded-md hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed font-medium;
+  }
+
+  .btn-secondary {
+    @apply px-4 py-2 bg-github-canvas-subtle dark:bg-github-canvas-darkSubtle border border-github-border-default dark:border-github-border-dark text-github-fg-default dark:text-github-fg-dark rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-medium;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-2 border border-github-border-default dark:border-github-border-dark bg-github-canvas-default dark:bg-github-canvas-dark text-github-fg-default dark:text-github-fg-dark rounded-md focus:outline-none focus:ring-2 focus:ring-github-accent-emphasis dark:focus:ring-github-accent-dark;
+  }
+
+  .card {
+    @apply bg-github-canvas-subtle dark:bg-github-canvas-darkSubtle border border-github-border-default dark:border-github-border-dark rounded-lg p-4 hover:shadow-md transition-shadow;
+  }
+
+  .tab-button {
+    @apply px-4 py-2 font-medium text-github-fg-muted dark:text-github-fg-darkMuted hover:text-github-fg-default dark:hover:text-github-fg-dark border-b-2 border-transparent transition-colors;
+  }
+
+  .tab-button.active {
+    @apply text-github-fg-default dark:text-github-fg-dark border-github-accent-emphasis dark:border-github-accent-dark;
+  }
+
+  .filter-button {
+    @apply px-3 py-1.5 text-sm font-medium rounded-md border border-github-border-default dark:border-github-border-dark transition-colors;
+  }
+
+  .filter-button.active {
+    @apply bg-github-accent-emphasis dark:bg-github-accent-dark text-white border-transparent;
+  }
+
+  .filter-button:not(.active) {
+    @apply bg-github-canvas-default dark:bg-github-canvas-dark text-github-fg-default dark:text-github-fg-dark hover:bg-github-canvas-subtle dark:hover:bg-github-canvas-darkSubtle;
+  }
+
+  .badge {
+    @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .badge-open {
+    @apply bg-github-success-emphasis dark:bg-github-success-dark text-white;
+  }
+
+  .badge-closed {
+    @apply bg-github-danger-emphasis dark:bg-github-danger-dark text-white;
+  }
+
+  .badge-merged {
+    @apply bg-github-done-emphasis dark:bg-github-done-dark text-white;
+  }
+}
