@@ -83,9 +83,36 @@
                   </svg>
                 </button>
               </div>
-              <p class="text-xs text-github-fg-muted dark:text-github-fg-darkMuted mt-1">
-                Optional: Increases rate limit from 60 to 5000 requests/hour
-              </p>
+              <div class="text-xs text-github-fg-muted dark:text-github-fg-darkMuted mt-1 space-y-1">
+                <p>Optional: Increases rate limit from 60 to 5000 requests/hour</p>
+                <p>
+                  ℹ️ Your token is stored locally and never sent to any server except GitHub's API.
+                </p>
+                <p>
+                  <strong>Classic Token:</strong> Create at 
+                  <a 
+                    href="https://github.com/settings/tokens/new?description=GitHub%20Repo%20Upvotes&scopes=public_repo" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    class="text-github-accent-emphasis dark:text-github-accent-dark hover:underline"
+                  >
+                    github.com/settings/tokens
+                  </a>
+                  with <code class="px-1 py-0.5 bg-github-canvas-subtle dark:bg-github-canvas-darkSubtle rounded">public_repo</code> scope.
+                </p>
+                <p>
+                  <strong>Fine-grained Token (recommended):</strong> Create at 
+                  <a 
+                    href="https://github.com/settings/personal-access-tokens/new" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    class="text-github-accent-emphasis dark:text-github-accent-dark hover:underline"
+                  >
+                    github.com/settings/personal-access-tokens/new
+                  </a>
+                  with <strong>Public Repositories (read-only)</strong> access and <code class="px-1 py-0.5 bg-github-canvas-subtle dark:bg-github-canvas-darkSubtle rounded">Contents: Read-only</code> permission.
+                </p>
+              </div>
             </div>
 
             <div>
