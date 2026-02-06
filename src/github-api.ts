@@ -1,45 +1,67 @@
-import type { Repository, Issue, PullRequest, APIError, GraphQLResponse } from './types';
+import type { Repository, Issue, PullRequest, APIError, GraphQLResponse, LoadStateFilter } from './types';
 
 const GITHUB_API_URL = 'https://api.github.com/graphql';
 
-const QUERY = `
-  query($owner: String!, $name: String!, $issuesCursor: String, $prsCursor: String) {
-    repository(owner: $owner, name: $name) {
-      issues(first: 100, after: $issuesCursor, states: [OPEN, CLOSED], orderBy: {field: CREATED_AT, direction: DESC}) {
-        nodes {
-          number
-          title
-          url
-          state
-          createdAt
-          reactions {
-            totalCount
+// Build GraphQL query dynamically based on state filter
+function buildQuery(stateFilter: LoadStateFilter): string {
+  let issueStates: string;
+  let prStates: string;
+
+  switch (stateFilter) {
+    case 'open':
+      issueStates = '[OPEN]';
+      prStates = '[OPEN]';
+      break;
+    case 'closed':
+      issueStates = '[CLOSED]';
+      prStates = '[CLOSED, MERGED]';
+      break;
+    case 'all':
+    default:
+      issueStates = '[OPEN, CLOSED]';
+      prStates = '[OPEN, CLOSED, MERGED]';
+      break;
+  }
+
+  return `
+    query($owner: String!, $name: String!, $issuesCursor: String, $prsCursor: String) {
+      repository(owner: $owner, name: $name) {
+        issues(first: 100, after: $issuesCursor, states: ${issueStates}, orderBy: {field: CREATED_AT, direction: DESC}) {
+          nodes {
+            number
+            title
+            url
+            state
+            createdAt
+            reactions {
+              totalCount
+            }
+          }
+          pageInfo {
+            hasNextPage
+            endCursor
           }
         }
-        pageInfo {
-          hasNextPage
-          endCursor
-        }
-      }
-      pullRequests(first: 100, after: $prsCursor, states: [OPEN, CLOSED, MERGED], orderBy: {field: CREATED_AT, direction: DESC}) {
-        nodes {
-          number
-          title
-          url
-          state
-          createdAt
-          reactions {
-            totalCount
+        pullRequests(first: 100, after: $prsCursor, states: ${prStates}, orderBy: {field: CREATED_AT, direction: DESC}) {
+          nodes {
+            number
+            title
+            url
+            state
+            createdAt
+            reactions {
+              totalCount
+            }
           }
-        }
-        pageInfo {
-          hasNextPage
-          endCursor
+          pageInfo {
+            hasNextPage
+            endCursor
+          }
         }
       }
     }
-  }
-`;
+  `;
+}
 
 interface FetchResult {
   issues: Issue[];
@@ -81,9 +103,11 @@ async function makeGraphQLRequest(
 
 async function fetchAllPages(
   repo: Repository,
+  stateFilter: LoadStateFilter,
   token?: string,
   onProgress?: (issuesCount: number, prsCount: number) => void
 ): Promise<FetchResult> {
+  const query = buildQuery(stateFilter);
   let allIssues: Issue[] = [];
   let allPRs: PullRequest[] = [];
   let issuesCursor: string | null = null;
@@ -105,7 +129,7 @@ async function fetchAllPages(
     }
 
     try {
-      const response = await makeGraphQLRequest(QUERY, variables, token);
+      const response = await makeGraphQLRequest(query, variables, token);
 
       if (response.errors && response.errors.length > 0) {
         const error = response.errors[0];
@@ -223,11 +247,12 @@ async function fetchAllPages(
 
 export async function fetchRepositoryData(
   repo: Repository,
+  stateFilter: LoadStateFilter = 'all',
   token?: string,
   onProgress?: (issuesCount: number, prsCount: number) => void
 ): Promise<FetchResult> {
-  console.log(`Fetching data for ${repo.owner}/${repo.name}...`);
-  const result = await fetchAllPages(repo, token, onProgress);
+  console.log(`Fetching data for ${repo.owner}/${repo.name} (${stateFilter})...`);
+  const result = await fetchAllPages(repo, stateFilter, token, onProgress);
   console.log(`Fetched ${result.issues.length} issues and ${result.pullRequests.length} pull requests`);
   return result;
 }

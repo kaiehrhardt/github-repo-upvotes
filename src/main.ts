@@ -1,5 +1,5 @@
 import './styles.css';
-import type { AppState, StateFilter } from './types';
+import type { AppState, StateFilter, LoadStateFilter } from './types';
 import { parseRepository } from './utils';
 import { fetchRepositoryData } from './github-api';
 import { 
@@ -40,6 +40,7 @@ const state: AppState = {
 // DOM Elements
 const repoInput = document.getElementById('repo-input') as HTMLInputElement;
 const tokenInput = document.getElementById('token-input') as HTMLInputElement;
+const loadStateFilterSelect = document.getElementById('load-state-filter') as HTMLSelectElement;
 const loadBtn = document.getElementById('load-btn') as HTMLButtonElement;
 const themeToggle = document.getElementById('theme-toggle') as HTMLButtonElement;
 const clearTokenBtn = document.getElementById('clear-token-btn') as HTMLButtonElement;
@@ -167,6 +168,9 @@ async function handleLoad(): Promise<void> {
     saveToken(token);
   }
 
+  // Get load state filter
+  const loadStateFilter = loadStateFilterSelect.value as LoadStateFilter;
+
   // Show loading state
   state.loading = true;
   showLoading();
@@ -174,7 +178,7 @@ async function handleLoad(): Promise<void> {
 
   try {
     // Fetch data with progress callback
-    const result = await fetchRepositoryData(repo, token, (issuesCount, prsCount) => {
+    const result = await fetchRepositoryData(repo, loadStateFilter, token, (issuesCount, prsCount) => {
       updateLoadingProgress(issuesCount, prsCount);
     });
 

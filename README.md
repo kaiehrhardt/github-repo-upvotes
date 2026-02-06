@@ -5,6 +5,7 @@ A static web application that displays GitHub repository issues and pull request
 ## Features
 
 - **Repository Search**: View issues and pull requests from any public GitHub repository
+- **Load State Selection**: Choose to load All, Only Open, or Only Closed items for faster loading
 - **Reaction Sorting**: Items are automatically sorted by total reaction count (all reaction types: 👍❤️🎉😄😕👀🚀👎)
 - **Separate Tabs**: Issues and Pull Requests are displayed in separate, filterable tabs
 - **State Filtering**: Filter by All, Open, Closed, or Merged (PRs only)
@@ -47,10 +48,11 @@ Visit the deployed application: `https://<your-username>.github.io/github-repo-u
 
 1. **Enter a repository** in the format `owner/repo` (e.g., `facebook/react`)
 2. **(Optional)** Enter a GitHub Personal Access Token for higher rate limits
-3. Click **"Load Repository Data"**
-4. Browse the **Issues** or **Pull Requests** tabs
-5. Use the **filter buttons** to view All, Open, Closed, or Merged items
-6. Toggle **Dark/Light mode** using the button in the header
+3. **Select which items to load**: Choose "All", "Only Open", or "Only Closed" (default: Only Open for faster loading)
+4. Click **"Load Repository Data"**
+5. Browse the **Issues** or **Pull Requests** tabs
+6. Use the **filter buttons** to view All, Open, Closed, or Merged items
+7. Toggle **Dark/Light mode** using the button in the header
 
 ## GitHub Token (Optional)
 

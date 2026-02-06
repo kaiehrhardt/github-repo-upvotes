@@ -88,6 +88,23 @@
               </p>
             </div>
 
+            <div>
+              <label for="load-state-filter" class="block text-sm font-medium mb-2">
+                Which items to load?
+              </label>
+              <select
+                id="load-state-filter"
+                class="input-field"
+              >
+                <option value="all">All (Open, Closed, Merged)</option>
+                <option value="open" selected>Only Open</option>
+                <option value="closed">Only Closed</option>
+              </select>
+              <p class="text-xs text-github-fg-muted dark:text-github-fg-darkMuted mt-1">
+                Loading only open items is faster and uses fewer API requests
+              </p>
+            </div>
+
             <button id="load-btn" class="btn-primary w-full">
               Load Repository Data
             </button>

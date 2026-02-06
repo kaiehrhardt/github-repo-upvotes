@@ -62,6 +62,7 @@ export interface GraphQLResponse {
 
 // UI State types
 export type StateFilter = 'all' | 'open' | 'closed' | 'merged';
+export type LoadStateFilter = 'all' | 'open' | 'closed'; // Filter for loading data from API
 export type TabType = 'issues' | 'pullRequests';
 export type Theme = 'light' | 'dark';
 
