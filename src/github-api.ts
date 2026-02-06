@@ -1,6 +1,51 @@
-import type { Repository, Issue, PullRequest, APIError, GraphQLResponse, LoadStateFilter } from './types';
+import type { Repository, Issue, PullRequest, APIError, GraphQLResponse, LoadStateFilter, Reaction } from './types';
 
 const GITHUB_API_URL = 'https://api.github.com/graphql';
+
+// Helper to calculate positive and negative reaction counts from API response
+interface ReactionGroup {
+  content: string;
+  users: { totalCount: number };
+}
+
+interface RawReactionNode {
+  reactions: {
+    totalCount: number;
+  };
+  reactionGroups: ReactionGroup[];
+}
+
+function calculateReactionCounts(node: RawReactionNode): Reaction {
+  let positiveCount = 0;
+  let negativeCount = 0;
+
+  // Process reaction groups
+  for (const group of node.reactionGroups || []) {
+    const count = group.users.totalCount;
+    switch (group.content) {
+      // Positive reactions
+      case 'THUMBS_UP':
+      case 'HEART':
+      case 'HOORAY':
+      case 'ROCKET':
+      case 'EYES':
+      case 'LAUGH':  // Adding LAUGH as positive
+        positiveCount += count;
+        break;
+      // Negative reactions
+      case 'THUMBS_DOWN':
+      case 'CONFUSED':
+        negativeCount += count;
+        break;
+    }
+  }
+
+  return {
+    totalCount: node.reactions.totalCount,
+    positiveCount,
+    negativeCount,
+  };
+}
 
 // Build GraphQL query dynamically based on state filter
 function buildQuery(stateFilter: LoadStateFilter): string {
@@ -36,6 +81,12 @@ function buildQuery(stateFilter: LoadStateFilter): string {
             reactions {
               totalCount
             }
+            reactionGroups {
+              content
+              users {
+                totalCount
+              }
+            }
           }
           pageInfo {
             hasNextPage
@@ -51,6 +102,12 @@ function buildQuery(stateFilter: LoadStateFilter): string {
             createdAt
             reactions {
               totalCount
+            }
+            reactionGroups {
+              content
+              users {
+                totalCount
+              }
             }
           }
           pageInfo {
@@ -159,18 +216,34 @@ async function fetchAllPages(
 
       const { issues, pullRequests } = response.data.repository;
 
-      // Add issues from this page
+      // Add issues from this page - transform reactions
       if (hasMoreIssues && issues.nodes.length > 0) {
-        allIssues = [...allIssues, ...issues.nodes];
+        const transformedIssues = issues.nodes.map((node: any) => ({
+          number: node.number,
+          title: node.title,
+          url: node.url,
+          state: node.state,
+          createdAt: node.createdAt,
+          reactions: calculateReactionCounts(node),
+        }));
+        allIssues = [...allIssues, ...transformedIssues];
         hasMoreIssues = issues.pageInfo.hasNextPage;
         issuesCursor = issues.pageInfo.endCursor;
       } else {
         hasMoreIssues = false;
       }
 
-      // Add PRs from this page
+      // Add PRs from this page - transform reactions
       if (hasMorePRs && pullRequests.nodes.length > 0) {
-        allPRs = [...allPRs, ...pullRequests.nodes];
+        const transformedPRs = pullRequests.nodes.map((node: any) => ({
+          number: node.number,
+          title: node.title,
+          url: node.url,
+          state: node.state,
+          createdAt: node.createdAt,
+          reactions: calculateReactionCounts(node),
+        }));
+        allPRs = [...allPRs, ...transformedPRs];
         hasMorePRs = pullRequests.pageInfo.hasNextPage;
         prsCursor = pullRequests.pageInfo.endCursor;
       } else {

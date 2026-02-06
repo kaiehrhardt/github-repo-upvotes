@@ -6,7 +6,9 @@ A static web application that displays GitHub repository issues and pull request
 
 - **Repository Search**: View issues and pull requests from any public GitHub repository
 - **Load State Selection**: Choose to load All, Only Open, or Only Closed items for faster loading
-- **Reaction Sorting**: Items are automatically sorted by total reaction count (all reaction types: 👍❤️🎉😄😕👀🚀👎)
+- **Smart Reaction Tracking**: Separates positive reactions (👍❤️🎉🚀👀) from negative ones (👎😕)
+- **Reaction Sorting**: Items are automatically sorted by positive reaction count (descending)
+- **Visual Reaction Display**: Shows positive reactions in green and negative in red
 - **Separate Tabs**: Issues and Pull Requests are displayed in separate, filterable tabs
 - **State Filtering**: Filter by All, Open, Closed, or Merged (PRs only)
 - **Dark/Light Mode**: Toggle between dark and light themes with system preference detection

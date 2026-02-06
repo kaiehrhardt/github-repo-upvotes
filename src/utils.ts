@@ -25,8 +25,8 @@ export function isValidRepository(input: string): boolean {
 // Sorting functions
 export function sortByReactions<T extends Issue | PullRequest>(items: T[]): T[] {
   return [...items].sort((a, b) => {
-    // Primary: reactions count (descending)
-    const reactionDiff = b.reactions.totalCount - a.reactions.totalCount;
+    // Primary: positive reactions count (descending)
+    const reactionDiff = b.reactions.positiveCount - a.reactions.positiveCount;
     if (reactionDiff !== 0) {
       return reactionDiff;
     }
