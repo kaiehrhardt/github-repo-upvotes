@@ -1,6 +1,22 @@
+<div align="center">
+
+<img src="public/logo.svg" alt="GitHub Repo Upvotes Logo" width="80" height="80">
+
 # GitHub Repo Upvotes
 
-A static web application that displays GitHub repository issues and pull requests ranked by reactions (upvotes). Built with TypeScript, Vite, and Tailwind CSS.
+**A static web application that displays GitHub repository issues and pull requests ranked by reactions (upvotes).**
+
+*Built with TypeScript, Vite, and Tailwind CSS*
+
+[![Deploy to GitHub Pages](https://github.com/kaiehrhardt/github-repo-upvotes/actions/workflows/deploy.yml/badge.svg)](https://github.com/kaiehrhardt/github-repo-upvotes/actions/workflows/deploy.yml)
+[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Live-success?logo=github)](https://kaiehrhardt.github.io/github-repo-upvotes/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue?logo=typescript)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-7.3-646CFF?logo=vite)](https://vitejs.dev/)
+
+---
+
+</div>
 
 ## Features
 

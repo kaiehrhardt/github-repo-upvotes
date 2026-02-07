@@ -26,16 +26,16 @@ export default {
             darkMuted: '#8b949e',
           },
           accent: {
-            emphasis: '#0969da',
-            dark: '#58a6ff',
+            emphasis: '#DC2626', // Darker red instead of blue
+            dark: '#EF4444',
           },
           success: {
             emphasis: '#1a7f37',
             dark: '#3fb950',
           },
           danger: {
-            emphasis: '#cf222e',
-            dark: '#f85149',
+            emphasis: '#b91c1c',
+            dark: '#dc2626',
           },
           attention: {
             emphasis: '#9a6700',

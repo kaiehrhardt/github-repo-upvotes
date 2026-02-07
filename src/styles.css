@@ -4,25 +4,25 @@
 
 @layer base {
   body {
-    @apply bg-github-canvas-default dark:bg-github-canvas-dark text-github-fg-default dark:text-github-fg-dark transition-colors duration-200;
+    @apply bg-github-canvas-subtle dark:bg-github-canvas-dark text-github-fg-default dark:text-github-fg-dark transition-colors duration-200;
   }
 }
 
 @layer components {
   .btn-primary {
-    @apply px-4 py-2 bg-github-accent-emphasis dark:bg-github-accent-dark text-white rounded-md hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed font-medium;
+    @apply px-4 py-2 bg-github-accent-emphasis dark:bg-github-accent-dark text-white rounded-md hover:opacity-90 hover:shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium;
   }
 
   .btn-secondary {
-    @apply px-4 py-2 bg-github-canvas-subtle dark:bg-github-canvas-darkSubtle border border-github-border-default dark:border-github-border-dark text-github-fg-default dark:text-github-fg-dark rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-medium;
+    @apply px-4 py-2 bg-github-canvas-default dark:bg-github-canvas-darkSubtle border border-github-border-default dark:border-github-border-dark text-github-fg-default dark:text-github-fg-dark rounded-md hover:bg-github-canvas-subtle dark:hover:bg-github-canvas-dark transition-colors font-medium;
   }
 
   .input-field {
-    @apply w-full px-4 py-2 border border-github-border-default dark:border-github-border-dark bg-github-canvas-default dark:bg-github-canvas-dark text-github-fg-default dark:text-github-fg-dark rounded-md focus:outline-none focus:ring-2 focus:ring-github-accent-emphasis dark:focus:ring-github-accent-dark;
+    @apply w-full px-4 py-2 border border-github-border-default dark:border-github-border-dark bg-github-canvas-default dark:bg-github-canvas-darkSubtle text-github-fg-default dark:text-github-fg-dark rounded-md focus:outline-none focus:ring-2 focus:ring-github-accent-emphasis dark:focus:ring-github-accent-dark transition-shadow;
   }
 
   .card {
-    @apply bg-github-canvas-subtle dark:bg-github-canvas-darkSubtle border border-github-border-default dark:border-github-border-dark rounded-lg p-4 hover:shadow-md transition-shadow;
+    @apply bg-github-canvas-default dark:bg-github-canvas-darkSubtle border border-github-border-default dark:border-github-border-dark rounded-lg p-5 hover:shadow-lg hover:border-github-accent-emphasis dark:hover:border-github-accent-dark transition-all;
   }
 
   .tab-button {
@@ -30,23 +30,23 @@
   }
 
   .tab-button.active {
-    @apply text-github-fg-default dark:text-github-fg-dark border-github-accent-emphasis dark:border-github-accent-dark;
+    @apply text-github-accent-emphasis dark:text-github-accent-dark border-github-accent-emphasis dark:border-github-accent-dark;
   }
 
   .filter-button {
-    @apply px-3 py-1.5 text-sm font-medium rounded-md border border-github-border-default dark:border-github-border-dark transition-colors;
+    @apply px-3 py-1.5 text-sm font-medium rounded-md border border-github-border-default dark:border-github-border-dark transition-all;
   }
 
   .filter-button.active {
-    @apply bg-github-accent-emphasis dark:bg-github-accent-dark text-white border-transparent;
+    @apply bg-github-accent-emphasis dark:bg-github-accent-dark text-white border-transparent shadow-md;
   }
 
   .filter-button:not(.active) {
-    @apply bg-github-canvas-default dark:bg-github-canvas-dark text-github-fg-default dark:text-github-fg-dark hover:bg-github-canvas-subtle dark:hover:bg-github-canvas-darkSubtle;
+    @apply bg-github-canvas-default dark:bg-github-canvas-darkSubtle text-github-fg-default dark:text-github-fg-dark hover:bg-github-canvas-subtle dark:hover:bg-github-canvas-dark hover:border-github-accent-emphasis dark:hover:border-github-accent-dark;
   }
 
   .badge {
-    @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium;
+    @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium shadow-sm;
   }
 
   .badge-open {

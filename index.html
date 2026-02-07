@@ -2,22 +2,30 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="View GitHub repository issues and pull requests ranked by reactions/upvotes" />
     <title>GitHub Repo Upvotes</title>
   </head>
   <body>
-    <div id="app" class="min-h-screen">
+    <div id="app" class="min-h-screen bg-github-canvas-subtle dark:bg-github-canvas-dark">
       <!-- Header -->
-      <header class="border-b border-github-border-default dark:border-github-border-dark bg-github-canvas-default dark:bg-github-canvas-dark">
+      <header class="border-b border-github-border-default dark:border-github-border-dark bg-github-canvas-default dark:bg-github-canvas-darkSubtle shadow-sm">
         <div class="container mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 class="text-2xl font-bold text-github-fg-default dark:text-github-fg-dark">
-            GitHub Repo Upvotes
-          </h1>
+          <div class="flex items-center gap-3">
+            <img src="/logo.svg" alt="Logo" class="w-10 h-10 text-github-accent-emphasis dark:text-github-accent-dark" />
+            <div>
+              <h1 class="text-2xl font-bold text-github-fg-default dark:text-github-fg-dark">
+                GitHub Repo Upvotes
+              </h1>
+              <p class="text-xs text-github-fg-muted dark:text-github-fg-darkMuted">
+                Discover top-voted issues & PRs
+              </p>
+            </div>
+          </div>
           <button
             id="theme-toggle"
-            class="p-2 rounded-md hover:bg-github-canvas-subtle dark:hover:bg-github-canvas-darkSubtle transition-colors"
+            class="p-2 rounded-md hover:bg-github-canvas-subtle dark:hover:bg-github-canvas-dark transition-colors"
             aria-label="Toggle theme"
           >
             <svg id="theme-icon-light" class="w-6 h-6 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -205,7 +213,17 @@
 
       <!-- Footer -->
       <footer class="container mx-auto px-4 py-8 text-center text-sm text-github-fg-muted dark:text-github-fg-darkMuted border-t border-github-border-default dark:border-github-border-dark mt-12">
-        <p>Built with the GitHub GraphQL API</p>
+        <p class="flex items-center justify-center gap-1">
+          Built with 
+          <svg class="w-4 h-4 text-red-500" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.003-.003.001a.752.752 0 01-.704 0l-.003-.001z"/>
+          </svg>
+          by 
+          <a href="https://github.com/kaiehrhardt" target="_blank" rel="noopener noreferrer" class="text-github-accent-emphasis dark:text-github-accent-dark hover:underline font-medium">
+            kaiehrhardt
+          </a>
+          with OpenCode (Claude Sonnet 4.5) using the GitHub GraphQL API
+        </p>
       </footer>
     </div>
 
