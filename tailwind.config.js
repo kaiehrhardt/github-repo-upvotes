@@ -26,8 +26,8 @@ export default {
             darkMuted: '#8b949e',
           },
           accent: {
-            emphasis: '#EAB308', // Yellow accent color
-            dark: '#FBBF24',
+            emphasis: '#EBCB8B', // Soft yellow accent color
+            dark: '#EBCB8B',
           },
           success: {
             emphasis: '#1a7f37',
