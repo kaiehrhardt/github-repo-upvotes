@@ -12,13 +12,28 @@
       "schedule": ["before 3am on Monday", "before 3am on Thursday"]
     }
   ],
-  "postUpgradeTasks": {
-    "commands": [
-      "bash .github/scripts/update-badges.sh"
-    ],
-    "fileFilters": ["README.md"],
-    "executionMode": "branch"
-  },
+  "customManagers": [
+    {
+      "customType": "regex",
+      "fileMatch": ["^README\\.md$"],
+      "matchStrings": [
+        "badge/TypeScript-(?<currentValue>.*?)-blue"
+      ],
+      "depNameTemplate": "typescript",
+      "datasourceTemplate": "npm",
+      "versioningTemplate": "npm"
+    },
+    {
+      "customType": "regex",
+      "fileMatch": ["^README\\.md$"],
+      "matchStrings": [
+        "badge/Vite-(?<currentValue>.*?)-646CFF"
+      ],
+      "depNameTemplate": "vite",
+      "datasourceTemplate": "npm",
+      "versioningTemplate": "npm"
+    }
+  ],
   "prConcurrentLimit": 5,
   "prHourlyLimit": 2,
   "labels": ["dependencies"],
