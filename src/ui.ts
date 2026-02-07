@@ -81,14 +81,18 @@ function renderIssueCard(issue: Issue): string {
             </svg>
             <span class="font-semibold text-lg">${issue.reactions.positiveCount}</span>
           </div>
-          ${issue.reactions.negativeCount > 0 ? `
+          ${
+            issue.reactions.negativeCount > 0
+              ? `
           <div class="flex items-center text-red-600 dark:text-red-400">
             <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.736 3h4.018c.163 0 .326.02.485.06L17 4m-7 10v2a2 2 0 002 2h.095c.5 0 .905-.405.905-.905 0-.714.211-1.412.608-2.006L17 13V4m-7 10h2m5-10h2a2 2 0 012 2v6a2 2 0 01-2 2h-2.5"></path>
             </svg>
             <span class="font-semibold">${issue.reactions.negativeCount}</span>
           </div>
-          ` : ''}
+          `
+              : ''
+          }
         </div>
       </div>
     </div>
@@ -143,14 +147,18 @@ function renderPullRequestCard(pr: PullRequest): string {
             </svg>
             <span class="font-semibold text-lg">${pr.reactions.positiveCount}</span>
           </div>
-          ${pr.reactions.negativeCount > 0 ? `
+          ${
+            pr.reactions.negativeCount > 0
+              ? `
           <div class="flex items-center text-red-600 dark:text-red-400">
             <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.736 3h4.018c.163 0 .326.02.485.06L17 4m-7 10v2a2 2 0 002 2h.095c.5 0 .905-.405.905-.905 0-.714.211-1.412.608-2.006L17 13V4m-7 10h2m5-10h2a2 2 0 012 2v6a2 2 0 01-2 2h-2.5"></path>
             </svg>
             <span class="font-semibold">${pr.reactions.negativeCount}</span>
           </div>
-          ` : ''}
+          `
+              : ''
+          }
         </div>
       </div>
     </div>
@@ -163,7 +171,7 @@ function escapeHtml(text: string): string {
     '<': '&lt;',
     '>': '&gt;',
     '"': '&quot;',
-    "'": '&#039;'
+    "'": '&#039;',
   };
   return text.replace(/[&<>"']/g, (char) => map[char]);
 }
@@ -182,7 +190,7 @@ export function renderIssues(issues: Issue[], filter: StateFilter): void {
   } else {
     issuesList.classList.remove('hidden');
     emptyState.classList.add('hidden');
-    issuesList.innerHTML = sorted.map(issue => renderIssueCard(issue)).join('');
+    issuesList.innerHTML = sorted.map((issue) => renderIssueCard(issue)).join('');
   }
 }
 
@@ -199,7 +207,7 @@ export function renderPullRequests(prs: PullRequest[], filter: StateFilter): voi
   } else {
     prsList.classList.remove('hidden');
     emptyState.classList.add('hidden');
-    prsList.innerHTML = sorted.map(pr => renderPullRequestCard(pr)).join('');
+    prsList.innerHTML = sorted.map((pr) => renderPullRequestCard(pr)).join('');
   }
 }
 
@@ -235,9 +243,12 @@ export function switchTab(tab: TabType): void {
 }
 
 // Filter button management
-export function updateFilterButtons(activeFilter: StateFilter, loadStateFilter: LoadStateFilter): void {
+export function updateFilterButtons(
+  activeFilter: StateFilter,
+  loadStateFilter: LoadStateFilter
+): void {
   const filterButtons = document.querySelectorAll('.filter-button');
-  filterButtons.forEach(button => {
+  filterButtons.forEach((button) => {
     const filter = button.getAttribute('data-filter') as StateFilter;
 
     // Update "All" button text based on loadStateFilter

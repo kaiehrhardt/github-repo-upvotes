@@ -6,8 +6,8 @@ export interface Repository {
 
 export interface Reaction {
   totalCount: number;
-  positiveCount: number;  // 👍 THUMBS_UP, ❤️ HEART, 🎉 HOORAY, 🚀 ROCKET, 👀 EYES
-  negativeCount: number;  // 👎 THUMBS_DOWN, 😕 CONFUSED
+  positiveCount: number; // 👍 THUMBS_UP, ❤️ HEART, 🎉 HOORAY, 🚀 ROCKET, 👀 EYES
+  negativeCount: number; // 👎 THUMBS_DOWN, 😕 CONFUSED
 }
 
 export type IssueState = 'OPEN' | 'CLOSED';

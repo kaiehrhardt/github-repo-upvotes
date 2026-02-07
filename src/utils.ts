@@ -41,10 +41,10 @@ export function filterIssues(issues: Issue[], filter: StateFilter): Issue[] {
     return issues;
   }
   if (filter === 'open') {
-    return issues.filter(issue => issue.state === 'OPEN');
+    return issues.filter((issue) => issue.state === 'OPEN');
   }
   if (filter === 'closed') {
-    return issues.filter(issue => issue.state === 'CLOSED');
+    return issues.filter((issue) => issue.state === 'CLOSED');
   }
   // 'merged' filter doesn't apply to issues
   return [];
@@ -55,13 +55,13 @@ export function filterPullRequests(prs: PullRequest[], filter: StateFilter): Pul
     return prs;
   }
   if (filter === 'open') {
-    return prs.filter(pr => pr.state === 'OPEN');
+    return prs.filter((pr) => pr.state === 'OPEN');
   }
   if (filter === 'closed') {
-    return prs.filter(pr => pr.state === 'CLOSED');
+    return prs.filter((pr) => pr.state === 'CLOSED');
   }
   if (filter === 'merged') {
-    return prs.filter(pr => pr.state === 'MERGED');
+    return prs.filter((pr) => pr.state === 'MERGED');
   }
   return [];
 }

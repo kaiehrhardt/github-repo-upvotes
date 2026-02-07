@@ -4,148 +4,110 @@
 
 # GitHub Repo Upvotes
 
-**A static web application that displays GitHub repository issues and pull requests ranked by reactions (upvotes).**
+**Discover the most popular issues and pull requests in any GitHub repository, ranked by community reactions.**
 
 *Built with TypeScript, Vite, and Tailwind CSS*
 
 [![Deploy to GitHub Pages](https://github.com/kaiehrhardt/github-repo-upvotes/actions/workflows/deploy.yml/badge.svg)](https://github.com/kaiehrhardt/github-repo-upvotes/actions/workflows/deploy.yml)
-[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Live-success?logo=github)](https://kaiehrhardt.github.io/github-repo-upvotes/)
+[![CI](https://github.com/kaiehrhardt/github-repo-upvotes/actions/workflows/ci.yml/badge.svg)](https://github.com/kaiehrhardt/github-repo-upvotes/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue?logo=typescript)](https://www.typescriptlang.org/)
 [![Vite](https://img.shields.io/badge/Vite-7.3-646CFF?logo=vite)](https://vitejs.dev/)
+
+**[🚀 Try it now](https://kaiehrhardt.github.io/github-repo-upvotes/)**
 
 ---
 
 </div>
 
-## Features
+## ✨ Features
 
-- **Repository Search**: View issues and pull requests from any public GitHub repository
-- **Load State Selection**: Choose to load All, Only Open, or Only Closed items for faster loading
-- **Smart Reaction Tracking**: Separates positive reactions (👍❤️🎉🚀👀) from negative ones (👎😕)
-- **Reaction Sorting**: Items are automatically sorted by positive reaction count (descending)
-- **Visual Reaction Display**: Shows positive reactions in green and negative in red
-- **Separate Tabs**: Issues and Pull Requests are displayed in separate, filterable tabs
-- **State Filtering**: Filter by All, Open, Closed, or Merged (PRs only)
-- **Dark/Light Mode**: Toggle between dark and light themes with system preference detection
-- **GitHub Token Support**: Optional token for increased API rate limits (60 → 5000 requests/hour)
-- **Fully Static**: No backend required, can be hosted on GitHub Pages
-- **Pagination Handling**: Automatically fetches all issues and PRs (100 per request)
+- 🔍 **Browse any public repository** - Just enter `owner/repo` format
+- 👍 **Smart reaction tracking** - Positive (👍❤️🎉🚀👀😄) vs negative (👎😕) reactions
+- 📊 **Automatic sorting** - Most upvoted items at the top
+- ⚡ **Fast filtering** - Load only open, closed, or all items
+- 🏷️ **Separate tabs** - Issues and Pull Requests organized separately
+- 🎯 **State filters** - View All, Open, Closed, or Merged (PRs only)
+- 🌓 **Dark/Light mode** - Automatic system preference detection
+- 🔑 **Optional GitHub token** - Increase rate limit from 60 to 5,000 requests/hour
+- 🚫 **No backend needed** - Pure client-side application
 
-## Usage
+## 🚀 Quick Start
 
-### Online
+### Use Online
 
-Visit the deployed application: `https://<your-username>.github.io/github-repo-upvotes/`
+Visit **[kaiehrhardt.github.io/github-repo-upvotes](https://kaiehrhardt.github.io/github-repo-upvotes/)**
 
-### Running Locally
+### Run Locally
 
-1. **Install Node.js** (version 18 or higher)
+```bash
+# Clone the repository
+git clone https://github.com/kaiehrhardt/github-repo-upvotes.git
+cd github-repo-upvotes
 
-2. **Install dependencies**:
-   ```bash
-   npm install
-   ```
+# Install dependencies
+npm install
 
-3. **Start development server**:
-   ```bash
-   npm run dev
-   ```
-
-4. **Build for production**:
-   ```bash
-   npm run build
-   ```
-
-5. **Preview production build**:
-   ```bash
-   npm run preview
-   ```
-
-## How to Use the App
-
-1. **Enter a repository** in the format `owner/repo` (e.g., `facebook/react`)
-2. **(Optional)** Enter a GitHub Personal Access Token for higher rate limits
-3. **Select which items to load**: Choose "All", "Only Open", or "Only Closed" (default: Only Open for faster loading)
-4. Click **"Load Repository Data"**
-5. Browse the **Issues** or **Pull Requests** tabs
-6. Use the **filter buttons** to view All, Open, Closed, or Merged items
-7. Toggle **Dark/Light mode** using the button in the header
-
-## GitHub Token (Optional)
-
-To increase your API rate limit, you can create a GitHub Personal Access Token:
-
-1. Go to [GitHub Settings → Developer Settings → Personal Access Tokens](https://github.com/settings/tokens)
-2. Generate a new token (classic)
-3. Select scopes: `public_repo` (or no scopes for public data only)
-4. Copy the token and paste it into the app
-
-**Note**: The token is stored in your browser's localStorage and never sent to any server except GitHub's API.
-
-## Deployment to GitHub Pages
-
-This project is configured for automatic deployment to GitHub Pages via GitHub Actions.
-
-### Setup Steps
-
-1. **Push your code** to a GitHub repository
-2. **Enable GitHub Pages**:
-   - Go to repository Settings → Pages
-   - Set Source to "GitHub Actions"
-3. **Push to main branch** - the workflow will automatically build and deploy
-4. **Update `base` path** in `vite.config.ts` if your repo name differs:
-   ```typescript
-   base: '/your-repo-name/',
-   ```
-
-The app will be available at: `https://<your-username>.github.io/<repo-name>/`
-
-## Technology Stack
-
-- **TypeScript**: Type-safe JavaScript
-- **Vite**: Fast build tool and dev server
-- **Tailwind CSS**: Utility-first CSS framework
-- **GitHub GraphQL API v4**: Data fetching
-- **GitHub Pages**: Static hosting
-
-## Project Structure
-
-```
-github-repo-upvotes/
-├── src/
-│   ├── main.ts           # App entry point & event handlers
-│   ├── github-api.ts     # GitHub GraphQL API client
-│   ├── ui.ts             # UI rendering functions
-│   ├── types.ts          # TypeScript type definitions
-│   ├── storage.ts        # LocalStorage utilities
-│   ├── utils.ts          # Helper functions
-│   └── styles.css        # Tailwind CSS styles
-├── index.html            # HTML structure
-├── vite.config.ts        # Vite configuration
-├── tailwind.config.js    # Tailwind CSS configuration
-├── tsconfig.json         # TypeScript configuration
-└── package.json          # Project dependencies
+# Start development server
+npm run dev
 ```
 
-## API Rate Limits
+## 📖 How to Use
 
-- **Without token**: 60 requests/hour
-- **With token**: 5,000 requests/hour
+1. Enter a repository name (e.g., `facebook/react`)
+2. *(Optional)* Add a [GitHub Personal Access Token](#-github-token-optional) for higher rate limits
+3. Choose what to load: All, Only Open, or Only Closed items
+4. Click "Load Repository Data"
+5. Browse issues/PRs and filter by state
 
-Each repository query fetches 100 issues and 100 PRs per request. Pagination continues until all items are loaded.
+## 🔑 GitHub Token (Optional)
 
-## Browser Support
+Increase your API rate limit by creating a token:
 
-Modern browsers with ES2020 support:
-- Chrome/Edge 80+
-- Firefox 75+
-- Safari 13.1+
+**Fine-grained Token (recommended):**
+1. Go to [github.com/settings/personal-access-tokens/new](https://github.com/settings/personal-access-tokens/new)
+2. Select **Public Repositories (read-only)**
+3. Add **Contents: Read-only** permission
+4. Generate and copy the token
 
-## License
+**Classic Token:**
+1. Go to [github.com/settings/tokens](https://github.com/settings/tokens/new)
+2. Select `public_repo` scope
+3. Generate and copy the token
 
-MIT
+**Privacy:** Your token is stored locally in your browser and only sent to GitHub's API.
 
-## Contributing
+## 🛠️ Technology Stack
 
-Issues and pull requests are welcome!
+- **TypeScript** - Type-safe JavaScript
+- **Vite** - Fast build tool
+- **Tailwind CSS** - Utility-first CSS
+- **GitHub GraphQL API v4** - Data fetching
+
+## 📊 API Rate Limits
+
+| Type | Requests per hour |
+|------|-------------------|
+| Without token | 60 |
+| With token | 5,000 |
+
+## 🌐 Browser Support
+
+Modern browsers with ES2020 support (Chrome 80+, Firefox 75+, Safari 13.1+)
+
+## 📄 License
+
+MIT - see [LICENSE](LICENSE) file for details
+
+## 🤝 Contributing
+
+Issues and pull requests are welcome! Feel free to contribute.
+
+---
+
+<div align="center">
+
+Built with ❤️ by [kaiehrhardt](https://github.com/kaiehrhardt) using OpenCode (Claude Sonnet 4.5)
+
+</div>
+

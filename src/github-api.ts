@@ -1,4 +1,12 @@
-import type { Repository, Issue, PullRequest, APIError, GraphQLResponse, LoadStateFilter, Reaction } from './types';
+import type {
+  Repository,
+  Issue,
+  PullRequest,
+  APIError,
+  GraphQLResponse,
+  LoadStateFilter,
+  Reaction,
+} from './types';
 
 const GITHUB_API_URL = 'https://api.github.com/graphql';
 
@@ -29,7 +37,7 @@ function calculateReactionCounts(node: RawReactionNode): Reaction {
       case 'HOORAY':
       case 'ROCKET':
       case 'EYES':
-      case 'LAUGH':  // Adding LAUGH as positive
+      case 'LAUGH': // Adding LAUGH as positive
         positiveCount += count;
         break;
       // Negative reactions
@@ -49,8 +57,14 @@ function calculateReactionCounts(node: RawReactionNode): Reaction {
 
 // Get total counts for issues and PRs
 function buildCountQuery(stateFilter: LoadStateFilter): string {
-  const issueStates = stateFilter === 'open' ? '[OPEN]' : stateFilter === 'closed' ? '[CLOSED]' : '[OPEN, CLOSED]';
-  const prStates = stateFilter === 'open' ? '[OPEN]' : stateFilter === 'closed' ? '[CLOSED, MERGED]' : '[OPEN, CLOSED, MERGED]';
+  const issueStates =
+    stateFilter === 'open' ? '[OPEN]' : stateFilter === 'closed' ? '[CLOSED]' : '[OPEN, CLOSED]';
+  const prStates =
+    stateFilter === 'open'
+      ? '[OPEN]'
+      : stateFilter === 'closed'
+        ? '[CLOSED, MERGED]'
+        : '[OPEN, CLOSED, MERGED]';
 
   return `
     query($owner: String!, $name: String!) {
@@ -68,7 +82,8 @@ function buildCountQuery(stateFilter: LoadStateFilter): string {
 
 // Build separate GraphQL queries for issues and PRs
 function buildIssuesQuery(stateFilter: LoadStateFilter): string {
-  const states = stateFilter === 'open' ? '[OPEN]' : stateFilter === 'closed' ? '[CLOSED]' : '[OPEN, CLOSED]';
+  const states =
+    stateFilter === 'open' ? '[OPEN]' : stateFilter === 'closed' ? '[CLOSED]' : '[OPEN, CLOSED]';
 
   return `
     query($owner: String!, $name: String!, $cursor: String) {
@@ -188,10 +203,14 @@ async function fetchAllPages(
   const countQuery = buildCountQuery(stateFilter);
 
   try {
-    const countResponse = await makeGraphQLRequest(countQuery, {
-      owner: repo.owner,
-      name: repo.name,
-    }, token);
+    const countResponse = await makeGraphQLRequest(
+      countQuery,
+      {
+        owner: repo.owner,
+        name: repo.name,
+      },
+      token
+    );
 
     if (countResponse.errors && countResponse.errors.length > 0) {
       const error = countResponse.errors[0];
@@ -231,7 +250,7 @@ async function fetchAllPages(
       }),
       fetchAllPullRequestsParallel(repo, stateFilter, prsTotal, token, (count) => {
         if (onProgress) onProgress(0, count);
-      })
+      }),
     ]);
 
     // Check for errors
@@ -258,7 +277,7 @@ async function fetchAllIssuesParallel(
   totalCount: number,
   token?: string,
   onProgress?: (count: number) => void
-): Promise<{ data: Issue[], error?: APIError }> {
+): Promise<{ data: Issue[]; error?: APIError }> {
   if (totalCount === 0) {
     return { data: [] };
   }
@@ -328,7 +347,6 @@ async function fetchAllIssuesParallel(
     }
 
     return { data: allIssues };
-
   } catch (error) {
     return handleFetchError(error);
   }
@@ -341,7 +359,7 @@ async function fetchAllPullRequestsParallel(
   totalCount: number,
   token?: string,
   onProgress?: (count: number) => void
-): Promise<{ data: PullRequest[], error?: APIError }> {
+): Promise<{ data: PullRequest[]; error?: APIError }> {
   if (totalCount === 0) {
     return { data: [] };
   }
@@ -406,14 +424,13 @@ async function fetchAllPullRequestsParallel(
     }
 
     return { data: allPRs };
-
   } catch (error) {
     return handleFetchError(error);
   }
 }
 
 // Helper to handle fetch errors
-function handleFetchError(error: unknown): { data: any[], error: APIError } {
+function handleFetchError(error: unknown): { data: any[]; error: APIError } {
   if (error instanceof Error) {
     if (error.message === 'UNAUTHORIZED') {
       return {
@@ -467,6 +484,8 @@ export async function fetchRepositoryData(
 ): Promise<FetchResult> {
   console.log(`Fetching data for ${repo.owner}/${repo.name} (${stateFilter})...`);
   const result = await fetchAllPages(repo, stateFilter, token, onProgress);
-  console.log(`Fetched ${result.issues.length} issues and ${result.pullRequests.length} pull requests`);
+  console.log(
+    `Fetched ${result.issues.length} issues and ${result.pullRequests.length} pull requests`
+  );
   return result;
 }

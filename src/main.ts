@@ -9,7 +9,7 @@ import {
   initializeTheme,
   toggleTheme,
   saveLastRepo,
-  getLastRepo
+  getLastRepo,
 } from './storage';
 import {
   showLoading,
@@ -22,7 +22,7 @@ import {
   updateFilterButtons,
   toggleTokenVisibility,
   updateClearTokenButton,
-  updateLoadingProgress
+  updateLoadingProgress,
 } from './ui';
 
 // Application state
@@ -128,7 +128,7 @@ function setupEventListeners(): void {
   });
 
   // Filter buttons
-  filterButtons.forEach(button => {
+  filterButtons.forEach((button) => {
     button.addEventListener('click', () => {
       const filter = button.getAttribute('data-filter') as StateFilter;
 
@@ -189,12 +189,17 @@ async function handleLoad(): Promise<void> {
     let currentPRsCount = 0;
 
     // Fetch data with progress callback
-    const result = await fetchRepositoryData(repo, loadStateFilter, token, (issuesCount, prsCount) => {
-      // Update counters (these come from separate parallel fetches)
-      if (issuesCount > 0) currentIssuesCount = issuesCount;
-      if (prsCount > 0) currentPRsCount = prsCount;
-      updateLoadingProgress(currentIssuesCount, currentPRsCount);
-    });
+    const result = await fetchRepositoryData(
+      repo,
+      loadStateFilter,
+      token,
+      (issuesCount, prsCount) => {
+        // Update counters (these come from separate parallel fetches)
+        if (issuesCount > 0) currentIssuesCount = issuesCount;
+        if (prsCount > 0) currentPRsCount = prsCount;
+        updateLoadingProgress(currentIssuesCount, currentPRsCount);
+      }
+    );
 
     if (result.error) {
       // Handle API errors
@@ -229,7 +234,6 @@ async function handleLoad(): Promise<void> {
 
     // Render initial data
     renderCurrentTab();
-
   } catch (error) {
     console.error('Unexpected error:', error);
     showError({
