@@ -177,11 +177,18 @@ function escapeHtml(text: string): string {
 }
 
 // Render lists
-export function renderIssues(issues: Issue[], filter: StateFilter): void {
+export function renderIssues(issues: Issue[], filter: StateFilter, searchQuery = ''): void {
   const issuesList = getElement('issues-list');
   const emptyState = getElement('empty-state');
 
-  const filtered = filterIssues(issues, filter);
+  let filtered = filterIssues(issues, filter);
+
+  // Apply search filter
+  if (searchQuery) {
+    const query = searchQuery.toLowerCase();
+    filtered = filtered.filter((issue) => issue.title.toLowerCase().includes(query));
+  }
+
   const sorted = sortByReactions(filtered);
 
   if (sorted.length === 0) {
@@ -194,11 +201,22 @@ export function renderIssues(issues: Issue[], filter: StateFilter): void {
   }
 }
 
-export function renderPullRequests(prs: PullRequest[], filter: StateFilter): void {
+export function renderPullRequests(
+  prs: PullRequest[],
+  filter: StateFilter,
+  searchQuery = ''
+): void {
   const prsList = getElement('prs-list');
   const emptyState = getElement('empty-state');
 
-  const filtered = filterPullRequests(prs, filter);
+  let filtered = filterPullRequests(prs, filter);
+
+  // Apply search filter
+  if (searchQuery) {
+    const query = searchQuery.toLowerCase();
+    filtered = filtered.filter((pr) => pr.title.toLowerCase().includes(query));
+  }
+
   const sorted = sortByReactions(filtered);
 
   if (sorted.length === 0) {

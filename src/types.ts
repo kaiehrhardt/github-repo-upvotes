@@ -86,5 +86,6 @@ export interface AppState {
   activeTab: TabType;
   stateFilter: StateFilter;
   loadStateFilter: LoadStateFilter;
+  searchQuery: string;
   theme: Theme;
 }

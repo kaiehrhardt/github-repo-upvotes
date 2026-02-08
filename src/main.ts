@@ -35,12 +35,14 @@ const state: AppState = {
   activeTab: 'issues',
   stateFilter: 'all',
   loadStateFilter: 'open',
+  searchQuery: '',
   theme: 'light',
 };
 
 // DOM Elements
 const repoInput = document.getElementById('repo-input') as HTMLInputElement;
 const tokenInput = document.getElementById('token-input') as HTMLInputElement;
+const searchInput = document.getElementById('search-input') as HTMLInputElement;
 const loadStateFilterSelect = document.getElementById('load-state-filter') as HTMLSelectElement;
 const loadBtn = document.getElementById('load-btn') as HTMLButtonElement;
 const themeToggle = document.getElementById('theme-toggle') as HTMLButtonElement;
@@ -141,6 +143,12 @@ function setupEventListeners(): void {
       updateFilterButtons(filter, state.loadStateFilter);
       renderCurrentTab();
     });
+  });
+
+  // Search input
+  searchInput.addEventListener('input', () => {
+    state.searchQuery = searchInput.value.trim();
+    renderCurrentTab();
   });
 }
 
@@ -249,9 +257,9 @@ async function handleLoad(): Promise<void> {
 // Render current tab with current filter
 function renderCurrentTab(): void {
   if (state.activeTab === 'issues') {
-    renderIssues(state.issues, state.stateFilter);
+    renderIssues(state.issues, state.stateFilter, state.searchQuery);
   } else {
-    renderPullRequests(state.pullRequests, state.stateFilter);
+    renderPullRequests(state.pullRequests, state.stateFilter, state.searchQuery);
   }
 }
 
