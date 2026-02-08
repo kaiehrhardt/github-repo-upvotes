@@ -6,10 +6,9 @@
 
 **Discover the most popular issues and pull requests in any GitHub repository, ranked by community reactions.**
 
-*Built with TypeScript, Vite, and Tailwind CSS*
+_Built with TypeScript, Vite, and Tailwind CSS_
 
 [![Deploy to GitHub Pages](https://github.com/kaiehrhardt/github-repo-upvotes/actions/workflows/deploy.yml/badge.svg)](https://github.com/kaiehrhardt/github-repo-upvotes/actions/workflows/deploy.yml)
-[![CI](https://github.com/kaiehrhardt/github-repo-upvotes/actions/workflows/ci.yml/badge.svg)](https://github.com/kaiehrhardt/github-repo-upvotes/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue?logo=typescript)](https://www.typescriptlang.org/)
 [![Vite](https://img.shields.io/badge/Vite-7.3-646CFF?logo=vite)](https://vitejs.dev/)
@@ -46,16 +45,16 @@ git clone https://github.com/kaiehrhardt/github-repo-upvotes.git
 cd github-repo-upvotes
 
 # Install dependencies
-npm install
+bun install
 
 # Start development server
-npm run dev
+bun run dev
 ```
 
 ## 📖 How to Use
 
 1. Enter a repository name (e.g., `facebook/react`)
-2. *(Optional)* Add a [GitHub Personal Access Token](#-github-token-optional) for higher rate limits
+2. _(Optional)_ Add a [GitHub Personal Access Token](#-github-token-optional) for higher rate limits
 3. Choose what to load: All, Only Open, or Only Closed items
 4. Click "Load Repository Data"
 5. Browse issues/PRs and filter by state
@@ -65,12 +64,14 @@ npm run dev
 Increase your API rate limit by creating a token:
 
 **Fine-grained Token (recommended):**
+
 1. Go to [github.com/settings/personal-access-tokens/new](https://github.com/settings/personal-access-tokens/new)
 2. Select **Public Repositories (read-only)**
 3. Add **Contents: Read-only** permission
 4. Generate and copy the token
 
 **Classic Token:**
+
 1. Go to [github.com/settings/tokens](https://github.com/settings/tokens/new)
 2. Select `public_repo` scope
 3. Generate and copy the token
@@ -86,10 +87,10 @@ Increase your API rate limit by creating a token:
 
 ## 📊 API Rate Limits
 
-| Type | Requests per hour |
-|------|-------------------|
-| Without token | 60 |
-| With token | 5,000 |
+| Type          | Requests per hour |
+| ------------- | ----------------- |
+| Without token | 60                |
+| With token    | 5,000             |
 
 ## 🌐 Browser Support
 
@@ -110,4 +111,3 @@ Issues and pull requests are welcome! Feel free to contribute.
 Built with ❤️ by [kaiehrhardt](https://github.com/kaiehrhardt) using OpenCode (Claude Sonnet 4.5)
 
 </div>
-
