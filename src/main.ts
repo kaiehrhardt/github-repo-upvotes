@@ -10,6 +10,8 @@ import {
   toggleTheme,
   saveLastRepo,
   getLastRepo,
+  clearAuthMethod,
+  saveAuthMethod,
 } from './storage';
 import {
   showLoading,
@@ -24,6 +26,12 @@ import {
   updateClearTokenButton,
   updateLoadingProgress,
 } from './ui';
+import {
+  isOAuthConfigured,
+  initiateOAuthFlow,
+  handleOAuthCallback,
+  getOAuthRedirectUri,
+} from './oauth';
 
 // Application state
 const state: AppState = {
@@ -48,6 +56,7 @@ const loadBtn = document.getElementById('load-btn') as HTMLButtonElement;
 const themeToggle = document.getElementById('theme-toggle') as HTMLButtonElement;
 const clearTokenBtn = document.getElementById('clear-token-btn') as HTMLButtonElement;
 const toggleTokenBtn = document.getElementById('toggle-token-visibility') as HTMLButtonElement;
+const oauthLoginBtn = document.getElementById('oauth-login-btn') as HTMLButtonElement;
 const tabIssues = document.getElementById('tab-issues') as HTMLButtonElement;
 const tabPRs = document.getElementById('tab-prs') as HTMLButtonElement;
 const filterButtons = document.querySelectorAll('.filter-button');
@@ -57,11 +66,19 @@ function init(): void {
   // Initialize theme
   state.theme = initializeTheme();
 
+  // Check for OAuth callback
+  handleOAuthCallbackIfPresent();
+
   // Load saved token
   const savedToken = getToken();
   if (savedToken) {
     tokenInput.value = savedToken;
     updateClearTokenButton(true);
+  }
+
+  // Show OAuth button if configured
+  if (isOAuthConfigured()) {
+    oauthLoginBtn.classList.remove('hidden');
   }
 
   // Load last repository
@@ -84,6 +101,9 @@ function setupEventListeners(): void {
   // Load button
   loadBtn.addEventListener('click', handleLoad);
 
+  // OAuth login button
+  oauthLoginBtn.addEventListener('click', handleOAuthLogin);
+
   // Enter key on inputs
   repoInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
@@ -103,12 +123,14 @@ function setupEventListeners(): void {
     updateClearTokenButton(token.length > 0);
     if (token) {
       saveToken(token);
+      saveAuthMethod('token');
     }
   });
 
   clearTokenBtn.addEventListener('click', () => {
     tokenInput.value = '';
     clearToken();
+    clearAuthMethod();
     updateClearTokenButton(false);
   });
 
@@ -260,6 +282,73 @@ function renderCurrentTab(): void {
     renderIssues(state.issues, state.stateFilter, state.searchQuery);
   } else {
     renderPullRequests(state.pullRequests, state.stateFilter, state.searchQuery);
+  }
+}
+
+// Handle OAuth callback from GitHub
+async function handleOAuthCallbackIfPresent(): Promise<void> {
+  const urlParams = new URLSearchParams(window.location.search);
+  const code = urlParams.get('code');
+  const state = urlParams.get('state');
+
+  if (code && state) {
+    // Show loading state
+    showLoading();
+
+    try {
+      const workerUrl = import.meta.env.VITE_OAUTH_WORKER_URL || '';
+
+      if (!workerUrl) {
+        throw new Error('OAuth worker URL not configured');
+      }
+
+      const token = await handleOAuthCallback(code, state, workerUrl);
+
+      // Update UI
+      tokenInput.value = token;
+      updateClearTokenButton(true);
+
+      // Remove query params from URL
+      const url = new URL(window.location.href);
+      url.search = '';
+      window.history.replaceState({}, document.title, url.toString());
+
+      // Show success message
+      showResults();
+    } catch (error) {
+      console.error('OAuth callback error:', error);
+      showError({
+        message: error instanceof Error ? error.message : 'OAuth authentication failed',
+        type: 'UNKNOWN',
+      });
+    }
+  }
+}
+
+// Handle OAuth login button click
+async function handleOAuthLogin(): Promise<void> {
+  const workerUrl = import.meta.env.VITE_OAUTH_WORKER_URL || '';
+
+  if (!workerUrl) {
+    showError({
+      message:
+        'OAuth is not configured. Please set VITE_OAUTH_WORKER_URL or use a manual token instead.',
+      type: 'UNKNOWN',
+    });
+    return;
+  }
+
+  try {
+    await initiateOAuthFlow({
+      workerUrl,
+      redirectUri: getOAuthRedirectUri(),
+    });
+  } catch (error) {
+    console.error('OAuth login error:', error);
+    showError({
+      message: error instanceof Error ? error.message : 'Failed to initiate OAuth login',
+      type: 'UNKNOWN',
+    });
   }
 }
 

@@ -111,8 +111,15 @@ src/
 ├── ui.ts            # DOM manipulation and rendering
 ├── types.ts         # TypeScript types - single source of truth
 ├── storage.ts       # LocalStorage wrapper
+├── oauth.ts         # OAuth flow logic (frontend)
 ├── utils.ts         # Pure helper functions
-└── styles.css       # Tailwind + component styles
+├── styles.css       # Tailwind + component styles
+└── worker/          # Cloudflare Worker for OAuth (optional)
+    ├── oauth-worker.ts    # Worker implementation
+    ├── wrangler.toml      # Worker configuration
+    ├── package.json       # Worker dependencies
+    ├── README.md          # Worker quick start
+    └── OAUTH_SETUP.md     # Full OAuth setup guide
 ```
 
 **Separation of Concerns:**
@@ -121,6 +128,7 @@ src/
 - UI rendering separate from business logic
 - Types defined once, used everywhere
 - Pure functions in utils for testability
+- OAuth worker is completely optional (app works without it)
 
 ## Common Gotchas
 
@@ -178,6 +186,11 @@ bun run lint         # Check linting errors
 bun run lint:fix     # Auto-fix linting issues
 bun run format       # Format with Prettier
 
+# OAuth Worker (Optional)
+bun run worker:dev   # Run worker locally
+bun run worker:deploy # Deploy worker to Cloudflare
+bun run worker:tail  # View worker logs
+
 # Testing
 bun run build        # Also serves as smoke test
 ```
@@ -203,4 +216,4 @@ When working on this project:
 
 Built by [Kai Ehrhardt](https://github.com/kaiehrhardt) with [OpenCode](https://opencode.ai) (Claude Sonnet 4.5)
 
-Last updated: 2026-02-07
+Last updated: 2026-02-22

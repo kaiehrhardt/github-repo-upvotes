@@ -28,8 +28,9 @@ _Built with TypeScript, Vite, and Tailwind CSS_
 - 🏷️ **Separate tabs** - Issues and Pull Requests organized separately
 - 🎯 **State filters** - View All, Open, Closed, or Merged (PRs only)
 - 🌓 **Dark/Light mode** - Automatic system preference detection
-- 🔑 **Optional GitHub token** - Increase rate limit from 60 to 5,000 requests/hour
-- 🚫 **No backend needed** - Pure client-side application
+- 🔐 **OAuth authentication** - Sign in with GitHub (optional)
+- 🔑 **Manual token support** - Use personal access tokens as alternative
+- 🚫 **No backend needed** - Pure client-side application (OAuth worker optional)
 
 ## 🚀 Quick Start
 
@@ -60,6 +61,17 @@ bun run dev
 5. Browse issues/PRs and filter by state
 
 ## 🔑 GitHub Token (Optional)
+
+### Option 1: OAuth Login (Recommended)
+
+Sign in with your GitHub account for seamless authentication:
+
+1. Set up OAuth using our [OAuth Setup Guide](src/worker/OAUTH_SETUP.md)
+2. Click "Sign in with GitHub" in the app
+3. Authorize the application
+4. Enjoy increased rate limits automatically
+
+### Option 2: Manual Token
 
 Increase your API rate limit by creating a token:
 

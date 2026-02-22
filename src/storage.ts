@@ -4,6 +4,8 @@ const STORAGE_KEYS = {
   TOKEN: 'github_token',
   THEME: 'theme_preference',
   LAST_REPO: 'last_repository',
+  OAUTH_STATE: 'oauth_state',
+  AUTH_METHOD: 'auth_method', // 'token' or 'oauth'
 } as const;
 
 // Token management
@@ -17,6 +19,35 @@ export function getToken(): string | null {
 
 export function clearToken(): void {
   localStorage.removeItem(STORAGE_KEYS.TOKEN);
+}
+
+// OAuth state management
+export function saveOAuthState(state: string): void {
+  localStorage.setItem(STORAGE_KEYS.OAUTH_STATE, state);
+}
+
+export function getOAuthState(): string | null {
+  return localStorage.getItem(STORAGE_KEYS.OAUTH_STATE);
+}
+
+export function clearOAuthState(): void {
+  localStorage.removeItem(STORAGE_KEYS.OAUTH_STATE);
+}
+
+// Auth method management
+export type AuthMethod = 'token' | 'oauth';
+
+export function saveAuthMethod(method: AuthMethod): void {
+  localStorage.setItem(STORAGE_KEYS.AUTH_METHOD, method);
+}
+
+export function getAuthMethod(): AuthMethod | null {
+  const method = localStorage.getItem(STORAGE_KEYS.AUTH_METHOD);
+  return method === 'token' || method === 'oauth' ? method : null;
+}
+
+export function clearAuthMethod(): void {
+  localStorage.removeItem(STORAGE_KEYS.AUTH_METHOD);
 }
 
 // Theme management

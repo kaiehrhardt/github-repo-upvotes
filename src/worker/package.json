@@ -1,0 +1,15 @@
+{
+  "name": "github-oauth-worker",
+  "version": "1.0.0",
+  "description": "Cloudflare Worker for GitHub OAuth authentication",
+  "main": "oauth-worker.ts",
+  "scripts": {
+    "dev": "bunx wrangler dev",
+    "deploy": "bunx wrangler deploy",
+    "tail": "bunx wrangler tail"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260228.0",
+    "wrangler": "^4.67.0"
+  }
+}

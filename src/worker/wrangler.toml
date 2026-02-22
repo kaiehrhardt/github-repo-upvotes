@@ -1,0 +1,20 @@
+name = "github-oauth-worker"
+main = "oauth-worker.ts"
+compatibility_date = "2024-01-01"
+
+# Configure routes (adjust based on your domain)
+# routes = [
+#   { pattern = "oauth.yourdomain.com/*", zone_name = "yourdomain.com" }
+# ]
+
+# Environment variables (set these in Cloudflare dashboard or via wrangler secret)
+[vars]
+GITHUB_CLIENT_ID = "Ov23li6lDQu2O8MhYpfD"
+ALLOWED_ORIGINS = "https://kaiehrhardt.github.io,https://upvotes.keh.zone"
+
+# Secrets (use: wrangler secret put GITHUB_CLIENT_SECRET)
+# GITHUB_CLIENT_SECRET = "stored_as_secret"
+
+# Development settings
+[env.development]
+vars = { ALLOWED_ORIGINS = "http://localhost:5173,http://127.0.0.1:5173" }
