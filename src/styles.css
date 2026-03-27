@@ -1,6 +1,36 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-github-canvas-default: #ffffff;
+  --color-github-canvas-subtle: #f6f8fa;
+  --color-github-canvas-dark: #0d1117;
+  --color-github-canvas-darkSubtle: #161b22;
+
+  --color-github-border-default: #d0d7de;
+  --color-github-border-dark: #30363d;
+
+  --color-github-fg-default: #24292f;
+  --color-github-fg-muted: #57606a;
+  --color-github-fg-dark: #c9d1d9;
+  --color-github-fg-darkMuted: #8b949e;
+
+  --color-github-accent-emphasis: #ebcb8b;
+  --color-github-accent-dark: #ebcb8b;
+
+  --color-github-success-emphasis: #1a7f37;
+  --color-github-success-dark: #3fb950;
+
+  --color-github-danger-emphasis: #b91c1c;
+  --color-github-danger-dark: #dc2626;
+
+  --color-github-attention-emphasis: #9a6700;
+  --color-github-attention-dark: #d29922;
+
+  --color-github-done-emphasis: #8250df;
+  --color-github-done-dark: #a371f7;
+}
 
 @layer base {
   body {
