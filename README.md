@@ -52,6 +52,21 @@ bun install
 bun run dev
 ```
 
+### Debug Renovate Config Locally
+
+Test and debug the `renovate.json` without creating real PRs using Docker:
+
+```bash
+docker run \
+  -e RENOVATE_TOKEN=<github-token> \
+  -e LOG_LEVEL=debug \
+  -v `pwd`:/test \
+  -w /test \
+  --rm \
+  ghcr.io/renovatebot/renovate \
+  --platform local
+```
+
 ## 📖 How to Use
 
 1. Enter a repository name (e.g., `facebook/react`)
