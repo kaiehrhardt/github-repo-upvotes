@@ -16,7 +16,7 @@
     {
       "customType": "regex",
       "fileMatch": ["^README\\.md$"],
-      "matchStrings": ["badge/TypeScript-(?<currentValue>.*?)-"],
+      "matchStrings": ["badge/TypeScript-(?<currentValue>[\\d\\.]+)-"],
       "depNameTemplate": "typescript",
       "datasourceTemplate": "npm",
       "versioningTemplate": "npm"
@@ -24,7 +24,7 @@
     {
       "customType": "regex",
       "fileMatch": ["^README\\.md$"],
-      "matchStrings": ["badge/Vite-(?<currentValue>.*?)-"],
+      "matchStrings": ["badge/Vite-(?<currentValue>[\\d\\.]+)-"],
       "depNameTemplate": "vite",
       "datasourceTemplate": "npm",
       "versioningTemplate": "npm"

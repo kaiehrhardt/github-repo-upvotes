@@ -10,8 +10,8 @@ _Built with TypeScript, Vite, and Tailwind CSS_
 
 [![Deploy to GitHub Pages](https://github.com/kaiehrhardt/github-repo-upvotes/actions/workflows/deploy.yml/badge.svg)](https://github.com/kaiehrhardt/github-repo-upvotes/actions/workflows/deploy.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![TypeScript](https://img.shields.io/badge/TypeScript-6.0-blue?logo=typescript)](https://www.typescriptlang.org/)
-[![Vite](https://img.shields.io/badge/Vite-8.0-646CFF?logo=vite)](https://vitejs.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-6.0.2-blue?logo=typescript)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-8.0.3-646CFF?logo=vite)](https://vitejs.dev/)
 
 **[🚀 Try it now](https://kaiehrhardt.github.io/github-repo-upvotes/)**
 
