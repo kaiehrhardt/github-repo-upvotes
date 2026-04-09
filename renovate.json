@@ -9,7 +9,12 @@
       "groupName": "all dependencies",
       "groupSlug": "all",
       "matchPackageNames": ["*"],
-      "schedule": ["before 3am on Monday", "before 3am on Thursday"]
+      "schedule": ["before 3am on Monday", "before 3am on Thursday"],
+      "matchUpdateTypes": [
+        "patch",
+        "minor"
+      ],
+      "automerge": true
     }
   ],
   "customManagers": [
