@@ -10,17 +10,14 @@
       "groupSlug": "all",
       "matchPackageNames": ["*"],
       "schedule": ["before 3am on Monday", "before 3am on Thursday"],
-      "matchUpdateTypes": [
-        "patch",
-        "minor"
-      ],
+      "matchUpdateTypes": ["patch", "minor"],
       "automerge": true
     }
   ],
   "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": ["^README\\.md$"],
+      "managerFilePatterns": ["/^README\\.md$/"],
       "matchStrings": ["badge/TypeScript-(?<currentValue>[\\d\\.]+)-"],
       "depNameTemplate": "typescript",
       "datasourceTemplate": "npm",
@@ -28,7 +25,7 @@
     },
     {
       "customType": "regex",
-      "fileMatch": ["^README\\.md$"],
+      "managerFilePatterns": ["/^README\\.md$/"],
       "matchStrings": ["badge/Vite-(?<currentValue>[\\d\\.]+)-"],
       "depNameTemplate": "vite",
       "datasourceTemplate": "npm",
