@@ -12,7 +12,7 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
 
       - name: Validate Renovate config
-        run: npx --yes --package renovate -- renovate-config-validator renovate.json
+        run: npx --yes --package renovate@next -- renovate-config-validator renovate.json
 
   build:
     runs-on: ubuntu-latest
