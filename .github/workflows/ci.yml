@@ -5,6 +5,15 @@ on:
     branches: [main]
 
 jobs:
+  validate-renovate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Validate Renovate config
+        run: npx --yes --package renovate -- renovate-config-validator renovate.json
+
   build:
     runs-on: ubuntu-latest
     steps:
