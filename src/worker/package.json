@@ -9,7 +9,7 @@
     "tail": "bunx wrangler tail"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "4.20260409.1",
-    "wrangler": "4.81.1"
+    "@cloudflare/workers-types": "4.20260417.1",
+    "wrangler": "4.83.0"
   }
 }
