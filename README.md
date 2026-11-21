@@ -1,20 +1,20 @@
 <div align="center">
 
-<img src="public/logo.svg" alt="GitHub Repo Upvotes Logo" width="80" height="80">
+<img src="public/logo.svg" alt="GitHub Spotlight Logo" width="80" height="80">
 
-# GitHub Repo Upvotes
+# GitHub Spotlight (GHS)
 
 **Discover the most popular issues and pull requests in any GitHub repository, ranked by community reactions — and see who contributes the most PRs and issues among accounts, followers, and org members.**
 
 _Built with React, TypeScript, Vite, and Tailwind CSS_
 
-[![Deploy to GitHub Pages](https://github.com/kaiehrhardt/github-repo-upvotes/actions/workflows/deploy.yml/badge.svg)](https://github.com/kaiehrhardt/github-repo-upvotes/actions/workflows/deploy.yml)
+[![Deploy to GitHub Pages](https://github.com/kaiehrhardt/github-spotlight/actions/workflows/deploy.yml/badge.svg)](https://github.com/kaiehrhardt/github-spotlight/actions/workflows/deploy.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-6.0.3-blue?logo=typescript)](https://www.typescriptlang.org/)
 [![Vite](https://img.shields.io/badge/Vite-8.1.4-646CFF?logo=vite)](https://vitejs.dev/)
 [![React](https://img.shields.io/badge/React-19.3.1-61DAFB?logo=react)](https://react.dev/)
 
-**[🚀 Try it now](https://kaiehrhardt.github.io/github-repo-upvotes/)**
+**[🚀 Try it now](https://ghs.keh.zone/)**
 
 ---
 
@@ -44,14 +44,14 @@ _Built with React, TypeScript, Vite, and Tailwind CSS_
 
 ### Use Online
 
-Visit **[kaiehrhardt.github.io/github-repo-upvotes](https://kaiehrhardt.github.io/github-repo-upvotes/)**
+Visit **[ghs.keh.zone](https://ghs.keh.zone/)**
 
 ### Run Locally
 
 ```bash
 # Clone the repository
-git clone https://github.com/kaiehrhardt/github-repo-upvotes.git
-cd github-repo-upvotes
+git clone https://github.com/kaiehrhardt/github-spotlight.git
+cd github-spotlight
 
 # Install dependencies
 bun install

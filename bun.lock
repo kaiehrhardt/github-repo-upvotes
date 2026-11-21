@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "github-repo-upvotes",
+      "name": "github-spotlight",
       "dependencies": {
         "@tanstack/react-query": "5.108.2",
         "react": "19.3.1",

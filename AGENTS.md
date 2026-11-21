@@ -4,7 +4,7 @@ This file documents key development decisions, architecture choices, and context
 
 ## Project Overview
 
-**GitHub Repo Upvotes** is a static web application with two sections:
+**GitHub Spotlight (GHS)** (formerly GitHub Repo Upvotes) is a static web application with two sections:
 
 - **Repositories** (`#/repo/:owner/:name`): Issues and Pull Requests of a repo ranked by community reactions (upvotes)
 - **Contributions** (`#/contributions`): Leaderboards of authored PRs and issues for user-configured sources (individual accounts, followers of an account, members of an org), with quick time filters (last month / 3 months / year / all)
@@ -187,8 +187,8 @@ src/
 
 ### Build Configuration
 
-- `base` path in `vite.config.ts` set to `/` for custom domain
-- Change to `/github-repo-upvotes/` if using GitHub Pages subdomain
+- `base` path in `vite.config.ts` set to `/` for the custom domain `ghs.keh.zone`
+- Change to `/github-spotlight/` if serving from the `kaiehrhardt.github.io` subdirectory instead
 - TypeScript `target: ES2020` for modern browser support
 
 ## Future Improvement Ideas
@@ -253,7 +253,7 @@ When working on this project:
 ## Deployment
 
 - Automatic via GitHub Actions on push to `main`
-- Hosted at: https://kaiehrhardt.github.io/github-repo-upvotes/
+- Hosted at: https://ghs.keh.zone/ (custom domain configured in the repo's Pages settings)
 - No manual deployment needed
 
 ## Contact & Credits

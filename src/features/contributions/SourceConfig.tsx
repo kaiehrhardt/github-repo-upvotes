@@ -134,7 +134,7 @@ export function SourceConfig({ sources, onChange }: Props) {
           <button
             className={smallButton}
             disabled={sources.length === 0}
-            onClick={() => downloadJson('contribution-sources.json', sources)}
+            onClick={() => downloadJson('ghs-sources.json', sources)}
           >
             Export
           </button>

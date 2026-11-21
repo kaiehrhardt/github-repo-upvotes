@@ -17,10 +17,10 @@ The OAuth flow uses a Cloudflare Worker as a secure backend to handle the token 
 1. Go to https://github.com/settings/developers
 2. Click **"New OAuth App"**
 3. Fill in the details:
-   - **Application name**: `GitHub Repo Upvotes` (or your custom name)
+   - **Application name**: `GitHub Spotlight` (or your custom name)
    - **Homepage URL**: `https://your-domain.com` (your deployed app URL)
    - **Authorization callback URL**: `https://your-domain.com` (same as homepage)
-   - **Application description**: (optional) "View GitHub repository issues and PRs ranked by reactions"
+   - **Application description**: (optional) "Top-voted issues & PRs and PR/issue contribution leaderboards"
 
 4. Click **"Register application"**
 5. Save your **Client ID**
@@ -153,8 +153,8 @@ bun run dev
 
 OAuth-authenticated requests have the same rate limits as personal access tokens:
 
-- **5000 requests/hour** for authenticated requests
-- **60 requests/hour** for unauthenticated requests
+- **5000 points/hour** for the GraphQL API
+- GitHub's GraphQL API does not accept unauthenticated requests, so the app needs either OAuth or a manual token
 
 ## Troubleshooting
 
@@ -244,4 +244,4 @@ Users can still use the manual token input if they prefer. The OAuth flow is com
 For issues or questions:
 
 - Check the [main README](../README.md)
-- Open an issue on [GitHub](https://github.com/kaiehrhardt/github-repo-upvotes/issues)
+- Open an issue on [GitHub](https://github.com/kaiehrhardt/github-spotlight/issues)

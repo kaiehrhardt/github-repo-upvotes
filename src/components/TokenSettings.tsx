@@ -15,7 +15,7 @@ function TokenHelp() {
       <p>
         <strong>Classic Token:</strong> Create at{' '}
         <a
-          href="https://github.com/settings/tokens/new?description=GitHub%20Repo%20Upvotes&scopes=public_repo,read:org"
+          href="https://github.com/settings/tokens/new?description=GitHub%20Spotlight&scopes=public_repo,read:org"
           target="_blank"
           rel="noopener noreferrer"
           className={linkClass}

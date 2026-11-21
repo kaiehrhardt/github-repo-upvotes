@@ -35,7 +35,7 @@ export function Header() {
           <img src="/logo.svg" alt="Logo" className="w-10 h-10" />
           <div>
             <h1 className="text-2xl font-bold text-github-fg-default dark:text-github-fg-dark">
-              GitHub Repo Upvotes
+              GitHub Spotlight
             </h1>
             <p className="text-xs text-github-fg-muted dark:text-github-fg-darkMuted">
               Discover top-voted issues & PRs and who contributes them
@@ -45,7 +45,7 @@ export function Header() {
         <div className="flex items-center gap-3">
           <RateLimitBadge />
           <a
-            href="https://github.com/kaiehrhardt/github-repo-upvotes"
+            href="https://github.com/kaiehrhardt/github-spotlight"
             target="_blank"
             rel="noopener noreferrer"
             className={`${iconButtonClass} hover:text-github-accent-emphasis dark:hover:text-github-accent-dark`}
