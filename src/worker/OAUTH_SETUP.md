@@ -149,6 +149,43 @@ bun run dev
 - **State Parameter**: The OAuth flow uses a cryptographic state parameter to prevent CSRF attacks
 - **Token Storage**: Tokens are stored in localStorage and only sent to GitHub's API
 
+### OAuth Scopes
+
+The worker requests these scopes when redirecting to GitHub (`oauth-worker.ts`, `/auth/github`):
+
+| Scope         | Why                                                                                   |
+| ------------- | ------------------------------------------------------------------------------------- |
+| `public_repo` | Read issues, pull requests and reactions of public repositories                       |
+| `read:user`   | Read the signed-in user's profile data (public profiles of others need no scope)      |
+| `read:org`    | List **private** members of organizations you belong to (Contributions → org sources) |
+
+**Why `read:org`?** GitHub only lists members who made their membership public, unless the token may read org membership. Without `read:org`, an org source shows only public members. Even with it, you see private members only for organizations **you are a member of**. For other orgs GitHub never reveals private members.
+
+Scopes are not configured in the GitHub OAuth App settings. The worker requests them on every login:
+
+```ts
+githubAuthUrl.searchParams.set('scope', 'public_repo read:user read:org');
+```
+
+To change them:
+
+1. Edit the scope string in `src/worker/oauth-worker.ts`
+2. Redeploy the worker: `bun run worker:deploy`
+3. In the app, click **Clear Token** and **Sign in with GitHub** again. GitHub asks you to approve the new scopes. Existing tokens keep their old scopes until you sign in again.
+
+You can check which scopes a token has in the `X-OAuth-Scopes` response header, e.g.:
+
+```bash
+curl -sI -H "Authorization: Bearer <token>" https://api.github.com/user | grep -i x-oauth-scopes
+```
+
+**Organization approval:** If an organization restricts OAuth app access, an org owner must approve the app under the organization's settings (**Third-party access → OAuth application policy**). Otherwise its private members stay hidden, even with `read:org`.
+
+**Manual tokens instead of OAuth:**
+
+- **Classic token:** Select the `read:org` scope when creating the token.
+- **Fine-grained token:** Grant the organization permission **Members: Read-only**. A fine-grained token belongs to a single resource owner, so it covers only one organization.
+
 ### Rate Limits
 
 OAuth-authenticated requests have the same rate limits as personal access tokens:
@@ -186,6 +223,12 @@ Check:
 1. Your GitHub OAuth App's client ID and secret are correct
 2. The callback URL matches your app's URL exactly
 3. The worker logs for more details: `wrangler tail`
+
+### Org sources only show public members
+
+- Check that the token has the `read:org` scope (see [OAuth Scopes](#oauth-scopes))
+- Sign in again after changing the worker's scopes, because old tokens keep their old scopes
+- Make sure you are a member of the organization and that it allows the OAuth app
 
 ## Development vs Production
 

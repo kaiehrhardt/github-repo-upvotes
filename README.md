@@ -105,6 +105,8 @@ Sign in with your GitHub account for seamless authentication:
 3. Authorize the application
 4. The token is stored automatically
 
+The OAuth login requests the `read:org` scope, so org sources also list private members of organizations you belong to. See [OAuth Scopes](src/worker/OAUTH_SETUP.md#oauth-scopes) for details and how to change them.
+
 ### Option 2: Manual Token
 
 Create a token:
