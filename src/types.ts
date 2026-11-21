@@ -6,7 +6,7 @@ export interface Repository {
 
 export interface Reaction {
   totalCount: number;
-  positiveCount: number; // 👍 THUMBS_UP, ❤️ HEART, 🎉 HOORAY, 🚀 ROCKET, 👀 EYES
+  positiveCount: number; // 👍 THUMBS_UP, ❤️ HEART, 🎉 HOORAY, 🚀 ROCKET, 👀 EYES, 😄 LAUGH
   negativeCount: number; // 👎 THUMBS_DOWN, 😕 CONFUSED
 }
 
@@ -31,37 +31,9 @@ export interface PullRequest {
   reactions: Reaction;
 }
 
-// API Response types
-export interface PageInfo {
-  hasNextPage: boolean;
-  endCursor: string | null;
-}
-
-export interface IssuesConnection {
-  nodes: Issue[];
-  pageInfo: PageInfo;
-  totalCount?: number;
-}
-
-export interface PullRequestsConnection {
-  nodes: PullRequest[];
-  pageInfo: PageInfo;
-  totalCount?: number;
-}
-
-export interface RepositoryData {
-  repository: {
-    issues: IssuesConnection;
-    pullRequests: PullRequestsConnection;
-  };
-}
-
-export interface GraphQLResponse {
-  data?: RepositoryData;
-  errors?: Array<{
-    message: string;
-    type?: string;
-  }>;
+export interface RepositoryResult {
+  issues: Issue[];
+  pullRequests: PullRequest[];
 }
 
 // UI State types
@@ -71,21 +43,65 @@ export type TabType = 'issues' | 'pullRequests';
 export type Theme = 'light' | 'dark';
 
 // Error types
+export type APIErrorType = 'NOT_FOUND' | 'RATE_LIMIT' | 'UNAUTHORIZED' | 'NETWORK' | 'UNKNOWN';
+
 export interface APIError {
   message: string;
-  type: 'NOT_FOUND' | 'RATE_LIMIT' | 'UNAUTHORIZED' | 'NETWORK' | 'UNKNOWN';
+  type: APIErrorType;
 }
 
-// App State
-export interface AppState {
-  loading: boolean;
-  error: APIError | null;
-  repository: Repository | null;
-  issues: Issue[];
-  pullRequests: PullRequest[];
-  activeTab: TabType;
-  stateFilter: StateFilter;
-  loadStateFilter: LoadStateFilter;
-  searchQuery: string;
-  theme: Theme;
+export interface RateLimitInfo {
+  limit: number;
+  remaining: number;
+  /** Unix timestamp (seconds) when the limit resets */
+  reset: number;
+}
+
+// Contributions
+export type TimeRange = 'month' | '3months' | 'year' | 'all';
+
+export type ContributionSource = { id: string; label?: string } & (
+  | { kind: 'users'; logins: string[] }
+  | { kind: 'followers'; login: string }
+  | { kind: 'org'; org: string }
+);
+
+export type SourceKind = ContributionSource['kind'];
+
+export interface Member {
+  login: string;
+  name: string | null;
+  avatarUrl: string;
+}
+
+export interface MemberPage {
+  members: Member[];
+  totalCount: number;
+  /** Opaque cursor for the next page, null when there is none */
+  nextCursor: string | null;
+  /** Logins of a `users` source that could not be resolved */
+  notFound: string[];
+}
+
+export interface ContributionCounts {
+  login: string;
+  pullRequests: number;
+  issues: number;
+  /** True if GitHub could not answer the search for this user (counts shown as 0) */
+  unavailable: boolean;
+}
+
+export interface ContributionItem {
+  number: number;
+  title: string;
+  url: string;
+  state: PullRequestState;
+  createdAt: string;
+  repository: string;
+  reactions: Reaction;
+}
+
+export interface ContributionDetail {
+  pullRequests: ContributionItem[];
+  issues: ContributionItem[];
 }

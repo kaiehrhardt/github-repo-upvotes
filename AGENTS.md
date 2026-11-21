@@ -4,7 +4,12 @@ This file documents key development decisions, architecture choices, and context
 
 ## Project Overview
 
-**GitHub Repo Upvotes** is a static web application that displays GitHub Issues and Pull Requests ranked by community reactions (upvotes). It's built as a pure client-side app using TypeScript, Vite, and Tailwind CSS.
+**GitHub Repo Upvotes** is a static web application with two sections:
+
+- **Repositories** (`#/repo/:owner/:name`): Issues and Pull Requests of a repo ranked by community reactions (upvotes)
+- **Contributions** (`#/contributions`): Leaderboards of authored PRs and issues for user-configured sources (individual accounts, followers of an account, members of an org), with quick time filters (last month / 3 months / year / all)
+
+It's built as a pure client-side app using React, TanStack Query, React Router, TypeScript, Vite, and Tailwind CSS.
 
 ## Key Architecture Decisions
 
@@ -21,6 +26,24 @@ This file documents key development decisions, architecture choices, and context
 - Pagination with cursors is cleaner
 - Reaction counts via `reactionGroups` to avoid rate limits
 - Single query for all data needed
+
+### Contributions Architecture
+
+- **Counts via GitHub search, not `contributionsCollection`**: `search(type: ISSUE, first: 0, query: "author:X is:pr created:>=DATE") { issueCount }`.
+  - `contributionsCollection` is capped at a 1-year span, so "All" would need a query per year.
+  - It also hides private-repo PRs/issues as `restrictedContributionsCount`, even for repos the token can access.
+  - Search has neither limitation, and a batch of 10 users (20 aliases) costs 1 rate-limit point.
+- **Batching**: `COUNTS_BATCH_SIZE = 10` users per counts query. Search strings and logins are always passed as GraphQL variables, never interpolated.
+- **Members**: `followers` / `membersWithRole` are paginated with `useInfiniteQuery`. The first page holds "accounts per load" members (50–500, stored in localStorage), and "Load more" fetches the next page.
+- **Caching**: Query keys:
+  - `['source-members', sourceKey, pageSize]`
+  - `['contribution-counts', range, logins]`
+  - `['contribution-detail', login, range]`
+
+  Count batches stay aligned across pages, so switching back to an already loaded period or loading more doesn't refetch.
+
+- **Sources** are stored in localStorage (`contribution_sources`) and validated on load and import (`parseSources`).
+- **Concurrency**: `api/client.ts` limits parallel GraphQL requests to 4 to avoid GitHub's secondary rate limits.
 
 ### Parallel Data Fetching
 
@@ -50,6 +73,13 @@ This file documents key development decisions, architecture choices, and context
 - **Dark Mode**: Respects system preferences automatically
 
 ## Technical Stack Rationale
+
+### React + TanStack Query + React Router
+
+- React replaced the original vanilla DOM code (template strings + manual `classList` toggling) as the app grew a second section
+- TanStack Query handles caching, deduplication, cancellation (`signal`) and retries. Retry happens only for `NETWORK` errors, and an `UNAUTHORIZED` error clears the stored token (see `main.tsx`)
+- Hash router (`createHashRouter`) works on GitHub Pages without rewrites. The OAuth callback params (`?code=&state=`) sit before the hash and are handled by `useOAuthCallback`
+- Token and rate-limit state are small external stores consumed via `useSyncExternalStore` (`hooks/useToken.ts`, `api/client.ts`)
 
 ### TypeScript
 
@@ -106,15 +136,24 @@ This file documents key development decisions, architecture choices, and context
 
 ```
 src/
-├── main.ts          # Entry point - event handlers, app initialization
-├── github-api.ts    # All GitHub API logic isolated here
-├── ui.ts            # DOM manipulation and rendering
-├── types.ts         # TypeScript types - single source of truth
-├── storage.ts       # LocalStorage wrapper
-├── oauth.ts         # OAuth flow logic (frontend)
-├── utils.ts         # Pure helper functions
-├── styles.css       # Tailwind + component styles
-└── worker/          # Cloudflare Worker for OAuth (optional)
+├── main.tsx             # Entry: QueryClient, hash router, routes
+├── App.tsx              # Layout: header/nav, token settings, <Outlet/>, footer
+├── api/
+│   ├── client.ts        # GraphQL transport, GitHubApiError, rate-limit store, concurrency limit
+│   ├── reactions.ts     # reactionGroups selection + positive/negative counting
+│   ├── repo.ts          # Repository issues/PRs fetching
+│   └── contributions.ts # Members (users/followers/org), search-based counts, detail
+├── components/          # Shared UI: Header, Footer, TokenSettings, Icons, StateBadge, ...
+├── features/
+│   ├── repo/            # RepoPage, RepoResults, ItemCard, StateFilterBar
+│   └── contributions/   # ContributionsPage, SourceConfig, SourceSection, LeaderboardTable, UserDetail
+├── hooks/               # useToken, useTheme, useRateLimit, useSources, useOAuthCallback
+├── types.ts             # TypeScript types - single source of truth
+├── storage.ts           # LocalStorage wrapper
+├── oauth.ts             # OAuth flow logic (frontend)
+├── utils.ts             # Pure helper functions (filters, sorting, time ranges, login parsing)
+├── styles.css           # Tailwind + component styles
+└── worker/              # Cloudflare Worker for OAuth (optional)
     ├── oauth-worker.ts    # Worker implementation
     ├── wrangler.toml      # Worker configuration
     ├── package.json       # Worker dependencies
@@ -124,8 +163,8 @@ src/
 
 **Separation of Concerns:**
 
-- API logic separate from UI logic
-- UI rendering separate from business logic
+- API logic (`api/`) contains no React; components call it only through TanStack Query hooks
+- Features are self-contained folders; shared UI lives in `components/`
 - Types defined once, used everywhere
 - Pure functions in utils for testability
 - OAuth worker is completely optional (app works without it)
@@ -134,7 +173,8 @@ src/
 
 ### Rate Limits
 
-- GitHub API: 60 requests/hour without token, 5000 with token
+- GitHub's GraphQL API **requires a token**: unauthenticated requests get HTTP 403, which `api/client.ts` reports as "token required"
+- GraphQL budget: 5000 points/hour (remaining shown in header from `X-RateLimit-*` response headers)
 - Use `reactionGroups` instead of individual reaction queries
 - Pagination fetches 100 items per request
 
@@ -155,11 +195,15 @@ src/
 
 ### Potential Features
 
-- [ ] Add search/filter within loaded items
 - [ ] Export to CSV/JSON
 - [ ] Bookmark favorite repositories
 - [ ] Show reaction trends over time (requires historical data)
 - [ ] Support for GitHub Enterprise
+
+### Contributions Ideas
+
+- [ ] Merged-PR / reviews counts
+- [ ] Combined leaderboard across sources
 
 ### Performance Optimizations
 
@@ -216,4 +260,4 @@ When working on this project:
 
 Built by [Kai Ehrhardt](https://github.com/kaiehrhardt) with [OpenCode](https://opencode.ai) (Claude Sonnet 4.5)
 
-Last updated: 2026-02-22
+Last updated: 2026-11-21

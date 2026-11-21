@@ -1,4 +1,4 @@
-import type { Theme } from './types';
+import type { ContributionSource, Theme } from './types';
 
 const STORAGE_KEYS = {
   TOKEN: 'github_token',
@@ -6,7 +6,11 @@ const STORAGE_KEYS = {
   LAST_REPO: 'last_repository',
   OAUTH_STATE: 'oauth_state',
   AUTH_METHOD: 'auth_method', // 'token' or 'oauth'
+  CONTRIBUTION_SOURCES: 'contribution_sources',
+  MEMBERS_PAGE_SIZE: 'members_page_size',
 } as const;
+
+export const TOKEN_STORAGE_KEY = STORAGE_KEYS.TOKEN;
 
 // Token management
 export function saveToken(token: string): void {
@@ -100,4 +104,60 @@ export function initializeTheme(): Theme {
   const theme = getTheme();
   applyTheme(theme);
   return theme;
+}
+
+// Contribution sources
+function isContributionSource(value: unknown): value is ContributionSource {
+  if (typeof value !== 'object' || value === null) return false;
+  const source = value as Record<string, unknown>;
+  if (typeof source.id !== 'string') return false;
+  if (source.label !== undefined && typeof source.label !== 'string') return false;
+  switch (source.kind) {
+    case 'users':
+      return Array.isArray(source.logins) && source.logins.every((l) => typeof l === 'string');
+    case 'followers':
+      return typeof source.login === 'string';
+    case 'org':
+      return typeof source.org === 'string';
+    default:
+      return false;
+  }
+}
+
+/** Parses and validates a JSON list of sources. Throws on invalid input. */
+export function parseSources(json: string): ContributionSource[] {
+  const parsed: unknown = JSON.parse(json);
+  if (!Array.isArray(parsed) || !parsed.every(isContributionSource)) {
+    throw new Error('Invalid sources format');
+  }
+  return parsed;
+}
+
+export function getSources(): ContributionSource[] {
+  const stored = localStorage.getItem(STORAGE_KEYS.CONTRIBUTION_SOURCES);
+  if (!stored) return [];
+  try {
+    return parseSources(stored);
+  } catch {
+    return [];
+  }
+}
+
+export function saveSources(sources: ContributionSource[]): void {
+  localStorage.setItem(STORAGE_KEYS.CONTRIBUTION_SOURCES, JSON.stringify(sources));
+}
+
+// Number of members loaded per source (and per "Load more" click)
+export const MEMBERS_PAGE_SIZES = [50, 100, 200, 500] as const;
+const DEFAULT_MEMBERS_PAGE_SIZE = 100;
+
+export function getMembersPageSize(): number {
+  const stored = Number(localStorage.getItem(STORAGE_KEYS.MEMBERS_PAGE_SIZE));
+  return (MEMBERS_PAGE_SIZES as readonly number[]).includes(stored)
+    ? stored
+    : DEFAULT_MEMBERS_PAGE_SIZE;
+}
+
+export function saveMembersPageSize(size: number): void {
+  localStorage.setItem(STORAGE_KEYS.MEMBERS_PAGE_SIZE, String(size));
 }

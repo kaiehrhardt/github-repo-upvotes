@@ -1,4 +1,4 @@
-import type { Repository, Issue, PullRequest, StateFilter } from './types';
+import type { Repository, Issue, PullRequest, StateFilter, TimeRange } from './types';
 
 // Repository validation
 export function parseRepository(input: string): Repository | null {
@@ -96,4 +96,74 @@ export function pluralize(count: number, singular: string, plural?: string): str
     return `${count} ${singular}`;
   }
   return `${count} ${plural || singular + 's'}`;
+}
+
+// Time ranges for contributions
+export const TIME_RANGES: ReadonlyArray<{ value: TimeRange; label: string }> = [
+  { value: 'month', label: 'Last month' },
+  { value: '3months', label: 'Last 3 months' },
+  { value: 'year', label: 'Last year' },
+  { value: 'all', label: 'All' },
+];
+
+export function isTimeRange(value: string | null): value is TimeRange {
+  return TIME_RANGES.some((range) => range.value === value);
+}
+
+/** Start date of a time range, or null for 'all'. */
+export function getRangeStart(range: TimeRange, now: Date = new Date()): Date | null {
+  const start = new Date(now);
+  switch (range) {
+    case 'month':
+      start.setMonth(start.getMonth() - 1);
+      return start;
+    case '3months':
+      start.setMonth(start.getMonth() - 3);
+      return start;
+    case 'year':
+      start.setFullYear(start.getFullYear() - 1);
+      return start;
+    case 'all':
+      return null;
+  }
+}
+
+/** GitHub search query for PRs/issues authored by a user within a time range. */
+export function buildAuthorSearch(
+  login: string,
+  type: 'pr' | 'issue',
+  range: TimeRange,
+  now: Date = new Date()
+): string {
+  const start = getRangeStart(range, now);
+  const created = start ? ` created:>=${start.toISOString().slice(0, 10)}` : '';
+  return `author:${login} is:${type}${created}`;
+}
+
+// GitHub logins: alphanumeric or single hyphens, max 39 chars
+const LOGIN_PATTERN = /^[A-Za-z0-9](?:[A-Za-z0-9]|-(?=[A-Za-z0-9])){0,38}$/;
+
+export function isValidLogin(login: string): boolean {
+  return LOGIN_PATTERN.test(login);
+}
+
+/** Parses a comma/whitespace separated list of logins (leading @ allowed), deduplicated. */
+export function parseLoginList(input: string): string[] {
+  const seen = new Set<string>();
+  const logins: string[] = [];
+  for (const raw of input.split(/[\s,]+/)) {
+    const login = raw.trim().replace(/^@/, '');
+    if (!login || seen.has(login.toLowerCase())) continue;
+    seen.add(login.toLowerCase());
+    logins.push(login);
+  }
+  return logins;
+}
+
+export function chunk<T>(items: readonly T[], size: number): T[][] {
+  const chunks: T[][] = [];
+  for (let i = 0; i < items.length; i += size) {
+    chunks.push(items.slice(i, i + size));
+  }
+  return chunks;
 }

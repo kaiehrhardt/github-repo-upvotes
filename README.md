@@ -4,14 +4,15 @@
 
 # GitHub Repo Upvotes
 
-**Discover the most popular issues and pull requests in any GitHub repository, ranked by community reactions.**
+**Discover the most popular issues and pull requests in any GitHub repository, ranked by community reactions — and see who contributes the most PRs and issues among accounts, followers, and org members.**
 
-_Built with TypeScript, Vite, and Tailwind CSS_
+_Built with React, TypeScript, Vite, and Tailwind CSS_
 
 [![Deploy to GitHub Pages](https://github.com/kaiehrhardt/github-repo-upvotes/actions/workflows/deploy.yml/badge.svg)](https://github.com/kaiehrhardt/github-repo-upvotes/actions/workflows/deploy.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-6.0.3-blue?logo=typescript)](https://www.typescriptlang.org/)
 [![Vite](https://img.shields.io/badge/Vite-8.1.4-646CFF?logo=vite)](https://vitejs.dev/)
+[![React](https://img.shields.io/badge/React-19.3.1-61DAFB?logo=react)](https://react.dev/)
 
 **[🚀 Try it now](https://kaiehrhardt.github.io/github-repo-upvotes/)**
 
@@ -27,6 +28,13 @@ _Built with TypeScript, Vite, and Tailwind CSS_
 - ⚡ **Fast filtering** - Load only open, closed, or all items
 - 🏷️ **Separate tabs** - Issues and Pull Requests organized separately
 - 🎯 **State filters** - View All, Open, Closed, or Merged (PRs only)
+- 🔗 **Shareable links** - e.g. `#/repo/facebook/react?load=open`
+- 🏆 **Contributions leaderboards** - Count authored PRs and issues per account, for:
+  - individual accounts
+  - followers of an account
+  - members of an organization
+- 🗂️ **Configurable sources** - Each source gets its own leaderboard section, saved in your browser, import/export as JSON
+- ⏱️ **Quick time filters** - Last month, last 3 months, last year, or all time
 - 🌓 **Dark/Light mode** - Automatic system preference detection
 - 🔐 **OAuth authentication** - Sign in with GitHub (optional)
 - 🔑 **Manual token support** - Use personal access tokens as alternative
@@ -70,12 +78,21 @@ docker run \
 ## 📖 How to Use
 
 1. Enter a repository name (e.g., `facebook/react`)
-2. _(Optional)_ Add a [GitHub Personal Access Token](#-github-token-optional) for higher rate limits
+2. Add a [GitHub token](#-github-token) (GitHub's GraphQL API requires authentication)
 3. Choose what to load: All, Only Open, or Only Closed items
 4. Click "Load Repository Data"
 5. Browse issues/PRs and filter by state
 
-## 🔑 GitHub Token (Optional)
+### Contributions
+
+1. Open the **Contributions** tab
+2. Add sources: a list of accounts, the followers of an account, or the members of an organization
+3. Pick a period (Last month / Last 3 months / Last year / All)
+4. Sort by PRs, issues, or total; click an account to see its latest PRs and issues
+
+Large sources are loaded in steps (50–500 accounts per load, configurable) to protect your rate limit. Counts come from GitHub search, so private repositories are included only if your token can access them. Without org membership (or the `read:org` scope on classic tokens), only public org members are listed.
+
+## 🔑 GitHub Token
 
 ### Option 1: OAuth Login (Recommended)
 
@@ -84,11 +101,11 @@ Sign in with your GitHub account for seamless authentication:
 1. Set up OAuth using our [OAuth Setup Guide](src/worker/OAUTH_SETUP.md)
 2. Click "Sign in with GitHub" in the app
 3. Authorize the application
-4. Enjoy increased rate limits automatically
+4. The token is stored automatically
 
 ### Option 2: Manual Token
 
-Increase your API rate limit by creating a token:
+Create a token:
 
 **Fine-grained Token (recommended):**
 
@@ -100,13 +117,16 @@ Increase your API rate limit by creating a token:
 **Classic Token:**
 
 1. Go to [github.com/settings/tokens](https://github.com/settings/tokens/new)
-2. Select `public_repo` scope
+2. Select `public_repo` scope (add `read:org` to see private org members of your orgs)
 3. Generate and copy the token
 
 **Privacy:** Your token is stored locally in your browser and only sent to GitHub's API.
 
 ## 🛠️ Technology Stack
 
+- **React** - UI
+- **TanStack Query** - Caching, deduplication and retries for API calls
+- **React Router** - Hash-based routing (works on GitHub Pages)
 - **TypeScript** - Type-safe JavaScript
 - **Vite** - Fast build tool
 - **Tailwind CSS** - Utility-first CSS
@@ -114,10 +134,7 @@ Increase your API rate limit by creating a token:
 
 ## 📊 API Rate Limits
 
-| Type          | Requests per hour |
-| ------------- | ----------------- |
-| Without token | 60                |
-| With token    | 5,000             |
+GitHub's GraphQL API requires a token and allows 5,000 points per hour. The current remaining budget is shown in the app header.
 
 ## 🌐 Browser Support
 
@@ -135,6 +152,6 @@ Issues and pull requests are welcome! Feel free to contribute.
 
 <div align="center">
 
-Built with ❤️ by [kaiehrhardt](https://github.com/kaiehrhardt) using OpenCode (Claude Sonnet 4.5)
+Built with ❤️ by [kaiehrhardt](https://github.com/kaiehrhardt) using AI (Claude Opus 5.5)
 
 </div>
