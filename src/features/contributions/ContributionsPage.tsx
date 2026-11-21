@@ -1,36 +1,28 @@
-import { useState } from 'react';
-import { useSearchParams } from 'react-router';
+import { Navigate } from 'react-router';
 import { ErrorBox } from '../../components/StatusViews';
-import { useSources } from '../../hooks/useSources';
 import { useToken } from '../../hooks/useToken';
-import { getMembersPageSize, MEMBERS_PAGE_SIZES, saveMembersPageSize } from '../../storage';
-import type { TimeRange } from '../../types';
-import { isTimeRange } from '../../utils';
+import { getSources, MEMBERS_PAGE_SIZES } from '../../storage';
+import { serializeSource } from '../../utils';
 import { SourceConfig } from './SourceConfig';
 import { SourceSection } from './SourceSection';
 import { TimeRangeFilter } from './TimeRangeFilter';
+import { contributionsSearch, useContributionsUrl } from './useContributionsUrl';
 
 export function ContributionsPage() {
   const token = useToken();
-  const [sources, setSources] = useSources();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [pageSize, setPageSize] = useState(getMembersPageSize);
-  const [hideInactive, setHideInactive] = useState(false);
+  const { view, hasSourceParams, setSources, setRange, setPageSize, setHideInactive } =
+    useContributionsUrl();
+  const { sources, range, pageSize, hideInactive } = view;
 
-  const rangeParam = searchParams.get('range');
-  const range: TimeRange = isTimeRange(rangeParam) ? rangeParam : 'month';
-
-  const setRange = (next: TimeRange) => {
-    setSearchParams((params) => {
-      params.set('range', next);
-      return params;
-    });
-  };
-
-  const changePageSize = (size: number) => {
-    saveMembersPageSize(size);
-    setPageSize(size);
-  };
+  // Opened without sources in the URL (e.g. via the nav link): restore the last used set
+  if (!hasSourceParams) {
+    const stored = getSources();
+    if (stored.length > 0) {
+      return (
+        <Navigate to={{ search: contributionsSearch({ ...view, sources: stored }) }} replace />
+      );
+    }
+  }
 
   return (
     <>
@@ -53,7 +45,7 @@ export function ContributionsPage() {
               <select
                 className="input-field !w-auto !py-1"
                 value={pageSize}
-                onChange={(e) => changePageSize(Number(e.target.value))}
+                onChange={(e) => setPageSize(Number(e.target.value))}
               >
                 {MEMBERS_PAGE_SIZES.map((size) => (
                   <option key={size} value={size}>
@@ -74,7 +66,7 @@ export function ContributionsPage() {
         <div className="space-y-6">
           {sources.map((source) => (
             <SourceSection
-              key={source.id}
+              key={serializeSource(source)}
               source={source}
               range={range}
               pageSize={pageSize}

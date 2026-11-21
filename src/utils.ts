@@ -1,4 +1,11 @@
-import type { Repository, Issue, PullRequest, StateFilter, TimeRange } from './types';
+import type {
+  ContributionSource,
+  Issue,
+  PullRequest,
+  Repository,
+  StateFilter,
+  TimeRange,
+} from './types';
 
 // Repository validation
 export function parseRepository(input: string): Repository | null {
@@ -166,4 +173,68 @@ export function chunk<T>(items: readonly T[], size: number): T[][] {
     chunks.push(items.slice(i, i + size));
   }
   return chunks;
+}
+
+// Contribution sources in the URL: `kind:value[:label]`, e.g. `users:torvalds,gaearon`,
+// `followers:kaiehrhardt`, `org:vercel:My team`
+
+/** Identity of a source (kind + accounts), ignoring its label. */
+export function sourceIdentity(source: ContributionSource): string {
+  switch (source.kind) {
+    case 'users':
+      return `users:${source.logins.join(',')}`;
+    case 'followers':
+      return `followers:${source.login}`;
+    case 'org':
+      return `org:${source.org}`;
+  }
+}
+
+export function serializeSource(source: ContributionSource): string {
+  const label = source.label?.trim();
+  return label ? `${sourceIdentity(source)}:${label}` : sourceIdentity(source);
+}
+
+/** Parses `kind:value[:label]`; returns null for unknown kinds or invalid logins. */
+export function parseSource(value: string): ContributionSource | null {
+  const first = value.indexOf(':');
+  if (first === -1) return null;
+  const kind = value.slice(0, first);
+  const rest = value.slice(first + 1);
+  const second = rest.indexOf(':');
+  const accounts = second === -1 ? rest : rest.slice(0, second);
+  const label = second === -1 ? undefined : rest.slice(second + 1).trim() || undefined;
+
+  if (kind === 'users') {
+    const logins = parseLoginList(accounts).filter(isValidLogin);
+    return logins.length > 0 ? { kind, logins, label } : null;
+  }
+  const login = accounts.trim().replace(/^@/, '');
+  if (!isValidLogin(login)) return null;
+  if (kind === 'followers') return { kind, login, label };
+  if (kind === 'org') return { kind, org: login, label };
+  return null;
+}
+
+/** Parses a list of serialized sources, dropping invalid entries and duplicates. */
+export function parseSources(values: readonly string[]): ContributionSource[] {
+  const seen = new Set<string>();
+  const sources: ContributionSource[] = [];
+  for (const value of values) {
+    const source = parseSource(value);
+    if (!source) continue;
+    const identity = sourceIdentity(source).toLowerCase();
+    if (seen.has(identity)) continue;
+    seen.add(identity);
+    sources.push(source);
+  }
+  return sources;
+}
+
+/** Builds a query string, keeping `:`, `,` and `@` readable. */
+export function buildQueryString(params: Array<[string, string]>): string {
+  if (params.length === 0) return '';
+  const encode = (value: string) =>
+    encodeURIComponent(value).replace(/%3A/gi, ':').replace(/%2C/gi, ',').replace(/%40/gi, '@');
+  return '?' + params.map(([key, value]) => `${encode(key)}=${encode(value)}`).join('&');
 }

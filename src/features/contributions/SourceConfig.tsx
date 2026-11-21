@@ -1,8 +1,7 @@
-import { useRef, useState, type ChangeEvent, type FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
 import { ErrorBox } from '../../components/StatusViews';
-import { parseSources } from '../../storage';
 import type { ContributionSource, SourceKind } from '../../types';
-import { isValidLogin, parseLoginList } from '../../utils';
+import { isValidLogin, parseLoginList, serializeSource, sourceIdentity } from '../../utils';
 import { describeSource, SOURCE_KIND_LABELS, sourceTitle } from './sourceLabels';
 
 interface Draft {
@@ -30,14 +29,14 @@ function toDraft(source: ContributionSource): Draft {
 }
 
 /** Builds a source from the form, or returns an error message. */
-function fromDraft(draft: Draft, id: string): ContributionSource | string {
+function fromDraft(draft: Draft): ContributionSource | string {
   const label = draft.label.trim() || undefined;
   if (draft.kind === 'users') {
     const logins = parseLoginList(draft.value);
     if (logins.length === 0) return 'Please enter at least one account.';
     const invalid = logins.filter((login) => !isValidLogin(login));
     if (invalid.length > 0) return `Invalid account name(s): ${invalid.join(', ')}`;
-    return { id, label, kind: 'users', logins };
+    return { label, kind: 'users', logins };
   }
   const login = draft.value.trim().replace(/^@/, '');
   if (!isValidLogin(login)) {
@@ -46,18 +45,8 @@ function fromDraft(draft: Draft, id: string): ContributionSource | string {
       : 'Please enter a valid account name.';
   }
   return draft.kind === 'org'
-    ? { id, label, kind: 'org', org: login }
-    : { id, label, kind: 'followers', login };
-}
-
-function downloadJson(filename: string, data: unknown): void {
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = filename;
-  link.click();
-  URL.revokeObjectURL(url);
+    ? { label, kind: 'org', org: login }
+    : { label, kind: 'followers', login };
 }
 
 const smallButton =
@@ -70,25 +59,34 @@ interface Props {
 
 export function SourceConfig({ sources, onChange }: Props) {
   const [draft, setDraft] = useState<Draft>(EMPTY_DRAFT);
-  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const fileInput = useRef<HTMLInputElement>(null);
 
   const resetForm = () => {
     setDraft(EMPTY_DRAFT);
-    setEditingId(null);
+    setEditingIndex(null);
     setError(null);
   };
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
-    const source = fromDraft(draft, editingId ?? crypto.randomUUID());
+    const source = fromDraft(draft);
     if (typeof source === 'string') {
       setError(source);
       return;
     }
+    const identity = sourceIdentity(source).toLowerCase();
+    const duplicate = sources.some(
+      (s, i) => i !== editingIndex && sourceIdentity(s).toLowerCase() === identity
+    );
+    if (duplicate) {
+      setError('This source already exists.');
+      return;
+    }
     onChange(
-      editingId ? sources.map((s) => (s.id === editingId ? source : s)) : [...sources, source]
+      editingIndex === null
+        ? [...sources, source]
+        : sources.map((s, i) => (i === editingIndex ? source : s))
     );
     resetForm();
   };
@@ -100,58 +98,26 @@ export function SourceConfig({ sources, onChange }: Props) {
     onChange(next);
   };
 
-  const remove = (source: ContributionSource) => {
-    if (!window.confirm(`Remove "${sourceTitle(source)}"?`)) return;
-    onChange(sources.filter((s) => s.id !== source.id));
-    if (editingId === source.id) resetForm();
-  };
-
-  const handleImport = async (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    event.target.value = '';
-    if (!file) return;
-    try {
-      // New ids avoid collisions with existing sources
-      const imported = parseSources(await file.text()).map((s) => ({
-        ...s,
-        id: crypto.randomUUID(),
-      }));
-      onChange([...sources, ...imported]);
-      setError(null);
-    } catch {
-      setError('Could not import file: expected a JSON list of sources exported from this app.');
-    }
+  const remove = (index: number) => {
+    if (!window.confirm(`Remove "${sourceTitle(sources[index])}"?`)) return;
+    onChange(sources.filter((_, i) => i !== index));
+    resetForm();
   };
 
   return (
     <section className="card mb-6">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold">Sources</h2>
-        <div className="flex gap-2">
-          <button className={smallButton} onClick={() => fileInput.current?.click()}>
-            Import
-          </button>
-          <button
-            className={smallButton}
-            disabled={sources.length === 0}
-            onClick={() => downloadJson('ghs-sources.json', sources)}
-          >
-            Export
-          </button>
-          <input
-            ref={fileInput}
-            type="file"
-            accept="application/json,.json"
-            className="hidden"
-            onChange={handleImport}
-          />
-        </div>
-      </div>
+      <h2 className="text-lg font-semibold mb-1">Sources</h2>
+      <p className="text-xs text-github-fg-muted dark:text-github-fg-darkMuted mb-4">
+        Sources are part of the page URL, so you can bookmark or share this view.
+      </p>
 
       {sources.length > 0 && (
         <ul className="mb-4 divide-y divide-github-border-default dark:divide-github-border-dark">
           {sources.map((source, index) => (
-            <li key={source.id} className="py-2 flex items-center justify-between gap-3">
+            <li
+              key={serializeSource(source)}
+              className="py-2 flex items-center justify-between gap-3"
+            >
               <div className="min-w-0">
                 <p className="font-medium truncate">{sourceTitle(source)}</p>
                 <p className="text-xs text-github-fg-muted dark:text-github-fg-darkMuted truncate">
@@ -179,7 +145,7 @@ export function SourceConfig({ sources, onChange }: Props) {
                 <button
                   className={smallButton}
                   onClick={() => {
-                    setEditingId(source.id);
+                    setEditingIndex(index);
                     setDraft(toDraft(source));
                     setError(null);
                   }}
@@ -188,7 +154,7 @@ export function SourceConfig({ sources, onChange }: Props) {
                 </button>
                 <button
                   className={`${smallButton} hover:text-github-danger-emphasis dark:hover:text-github-danger-dark`}
-                  onClick={() => remove(source)}
+                  onClick={() => remove(index)}
                 >
                   Remove
                 </button>
@@ -199,7 +165,9 @@ export function SourceConfig({ sources, onChange }: Props) {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-3">
-        <h3 className="text-sm font-semibold">{editingId ? 'Edit source' : 'Add source'}</h3>
+        <h3 className="text-sm font-semibold">
+          {editingIndex !== null ? 'Edit source' : 'Add source'}
+        </h3>
         <div className="grid gap-3 md:grid-cols-[14rem_1fr]">
           <select
             className="input-field"
@@ -233,9 +201,9 @@ export function SourceConfig({ sources, onChange }: Props) {
         {error && <ErrorBox message={error} />}
         <div className="flex gap-2">
           <button type="submit" className="btn-primary">
-            {editingId ? 'Save changes' : 'Add source'}
+            {editingIndex !== null ? 'Save changes' : 'Add source'}
           </button>
-          {editingId && (
+          {editingIndex !== null && (
             <button type="button" className="btn-secondary" onClick={resetForm}>
               Cancel
             </button>

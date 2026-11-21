@@ -34,15 +34,19 @@ It's built as a pure client-side app using React, TanStack Query, React Router, 
   - It also hides private-repo PRs/issues as `restrictedContributionsCount`, even for repos the token can access.
   - Search has neither limitation, and a batch of 10 users (20 aliases) costs 1 rate-limit point.
 - **Batching**: `COUNTS_BATCH_SIZE = 10` users per counts query. Search strings and logins are always passed as GraphQL variables, never interpolated.
-- **Members**: `followers` / `membersWithRole` are paginated with `useInfiniteQuery`. The first page holds "accounts per load" members (50–500, stored in localStorage), and "Load more" fetches the next page.
+- **Members**: `followers` / `membersWithRole` are paginated with `useInfiniteQuery`. The first page holds "accounts per load" members (50–500, `accounts` URL param), and "Load more" fetches the next page.
 - **Caching**: Query keys:
-  - `['source-members', sourceKey, pageSize]`
+  - `['source-members', sourceIdentity, pageSize]`
   - `['contribution-counts', range, logins]`
   - `['contribution-detail', login, range]`
 
   Count batches stay aligned across pages, so switching back to an already loaded period or loading more doesn't refetch.
 
-- **Sources** are stored in localStorage (`contribution_sources`) and validated on load and import (`parseSources`).
+- **The whole view lives in the URL**, e.g. `#/contributions?range=month&accounts=100&hide=inactive&src=users:torvalds,gaearon&src=org:vercel:My%20team`.
+  - `range`, `accounts` (members per load) and `hide=inactive` hold the options.
+  - Each source is a `src` param in the form `kind:value[:label]`.
+  - Serialization lives in `utils.ts` (`serializeSource` / `parseSources`), URL handling in `features/contributions/useContributionsUrl.ts`.
+  - Edits also save sources and page size to localStorage (`contribution_sources`, `members_page_size`) as "last used". Opening `#/contributions` without `src` params restores the sources, and opening a shared link doesn't overwrite them.
 - **Concurrency**: `api/client.ts` limits parallel GraphQL requests to 4 to avoid GitHub's secondary rate limits.
 
 ### Parallel Data Fetching
@@ -147,7 +151,7 @@ src/
 ├── features/
 │   ├── repo/            # RepoPage, RepoResults, ItemCard, StateFilterBar
 │   └── contributions/   # ContributionsPage, SourceConfig, SourceSection, LeaderboardTable, UserDetail
-├── hooks/               # useToken, useTheme, useRateLimit, useSources, useOAuthCallback
+├── hooks/               # useToken, useTheme, useRateLimit, useOAuthCallback
 ├── types.ts             # TypeScript types - single source of truth
 ├── storage.ts           # LocalStorage wrapper
 ├── oauth.ts             # OAuth flow logic (frontend)

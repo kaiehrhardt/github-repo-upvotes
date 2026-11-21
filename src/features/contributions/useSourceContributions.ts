@@ -13,23 +13,11 @@ import type {
   Member,
   TimeRange,
 } from '../../types';
-import { chunk } from '../../utils';
+import { chunk, sourceIdentity } from '../../utils';
 
 export interface ContributorRow extends Member {
   counts: ContributionCounts | null; // null while loading or failed
   failed: boolean;
-}
-
-/** Stable cache key for a source's content (edits to a source invalidate its cache). */
-function sourceKey(source: ContributionSource): string {
-  switch (source.kind) {
-    case 'users':
-      return `users:${source.logins.join(',').toLowerCase()}`;
-    case 'followers':
-      return `followers:${source.login.toLowerCase()}`;
-    case 'org':
-      return `org:${source.org.toLowerCase()}`;
-  }
 }
 
 export function useSourceContributions(
@@ -41,7 +29,7 @@ export function useSourceContributions(
   const enabled = token !== null;
 
   const membersQuery = useInfiniteQuery({
-    queryKey: ['source-members', sourceKey(source), pageSize],
+    queryKey: ['source-members', sourceIdentity(source).toLowerCase(), pageSize],
     queryFn: ({ pageParam, signal }) =>
       fetchMembersPage(source, pageParam, pageSize, token, signal),
     initialPageParam: null as string | null,

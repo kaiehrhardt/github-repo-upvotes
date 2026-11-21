@@ -60,7 +60,7 @@ export interface RateLimitInfo {
 // Contributions
 export type TimeRange = 'month' | '3months' | 'year' | 'all';
 
-export type ContributionSource = { id: string; label?: string } & (
+export type ContributionSource = { label?: string } & (
   | { kind: 'users'; logins: string[] }
   | { kind: 'followers'; login: string }
   | { kind: 'org'; org: string }

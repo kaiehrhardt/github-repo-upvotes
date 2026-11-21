@@ -1,4 +1,5 @@
 import type { ContributionSource, Theme } from './types';
+import { parseSources, serializeSource } from './utils';
 
 const STORAGE_KEYS = {
   TOKEN: 'github_token',
@@ -106,45 +107,25 @@ export function initializeTheme(): Theme {
   return theme;
 }
 
-// Contribution sources
-function isContributionSource(value: unknown): value is ContributionSource {
-  if (typeof value !== 'object' || value === null) return false;
-  const source = value as Record<string, unknown>;
-  if (typeof source.id !== 'string') return false;
-  if (source.label !== undefined && typeof source.label !== 'string') return false;
-  switch (source.kind) {
-    case 'users':
-      return Array.isArray(source.logins) && source.logins.every((l) => typeof l === 'string');
-    case 'followers':
-      return typeof source.login === 'string';
-    case 'org':
-      return typeof source.org === 'string';
-    default:
-      return false;
-  }
-}
-
-/** Parses and validates a JSON list of sources. Throws on invalid input. */
-export function parseSources(json: string): ContributionSource[] {
-  const parsed: unknown = JSON.parse(json);
-  if (!Array.isArray(parsed) || !parsed.every(isContributionSource)) {
-    throw new Error('Invalid sources format');
-  }
-  return parsed;
-}
-
+// Contribution sources (last used set), stored in the same `kind:value[:label]` format as the URL
 export function getSources(): ContributionSource[] {
-  const stored = localStorage.getItem(STORAGE_KEYS.CONTRIBUTION_SOURCES);
-  if (!stored) return [];
   try {
-    return parseSources(stored);
+    const parsed: unknown = JSON.parse(
+      localStorage.getItem(STORAGE_KEYS.CONTRIBUTION_SOURCES) ?? '[]'
+    );
+    return Array.isArray(parsed)
+      ? parseSources(parsed.filter((v): v is string => typeof v === 'string'))
+      : [];
   } catch {
     return [];
   }
 }
 
 export function saveSources(sources: ContributionSource[]): void {
-  localStorage.setItem(STORAGE_KEYS.CONTRIBUTION_SOURCES, JSON.stringify(sources));
+  localStorage.setItem(
+    STORAGE_KEYS.CONTRIBUTION_SOURCES,
+    JSON.stringify(sources.map(serializeSource))
+  );
 }
 
 // Number of members loaded per source (and per "Load more" click)

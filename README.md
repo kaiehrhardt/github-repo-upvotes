@@ -33,7 +33,7 @@ _Built with React, TypeScript, Vite, and Tailwind CSS_
   - individual accounts
   - followers of an account
   - members of an organization
-- 🗂️ **Configurable sources** - Each source gets its own leaderboard section, saved in your browser, import/export as JSON
+- 🗂️ **Configurable sources** - Each source gets its own leaderboard section. Sources are encoded in the URL, so views can be bookmarked and shared
 - ⏱️ **Quick time filters** - Last month, last 3 months, last year, or all time
 - 🌓 **Dark/Light mode** - Automatic system preference detection
 - 🔐 **OAuth authentication** - Sign in with GitHub (optional)
@@ -89,6 +89,8 @@ docker run \
 2. Add sources: a list of accounts, the followers of an account, or the members of an organization
 3. Pick a period (Last month / Last 3 months / Last year / All)
 4. Sort by PRs, issues, or total; click an account to see its latest PRs and issues
+5. Share or bookmark the URL. It contains your sources, the period and the options, e.g.
+   `https://ghs.keh.zone/#/contributions?range=year&accounts=100&hide=inactive&src=org:vercel&src=users:torvalds,gaearon`
 
 Large sources are loaded in steps (50–500 accounts per load, configurable) to protect your rate limit. Counts come from GitHub search, so private repositories are included only if your token can access them. Without org membership (or the `read:org` scope on classic tokens), only public org members are listed.
 
